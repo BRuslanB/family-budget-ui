@@ -31,7 +31,7 @@ const createJwtInterceptor = (userSub, refreshTokenUUID) => {
             "http://localhost:8003/api/auth/refreshtoken",
             {
               email: userSub,
-              UUID: refreshTokenUUID
+              tokenUUID: refreshTokenUUID
             },
             {
               headers: {

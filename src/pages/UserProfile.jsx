@@ -1,48 +1,44 @@
 import { useContext, useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
 import createJwtInterceptor from "../components/shared/jwtInterceptor";
 import AuthContext from "../components/shared/AuthContext";
 
-const FavouriteMovie = () => {
+const UserProfile = () => {
   const { user, refreshToken } = useContext(AuthContext);
-  const [movies, setMovies] = useState([]);
+  const [profile, setProfile] = useState([]);
 
   console.log("userSub:", user.sub);
   console.log("refreshTokenUUID:", refreshToken.UUID);
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchProfile = async () => {
       try {
         const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
         const axiosInstance = interceptor;
         const response = await axiosInstance.get("http://localhost:8003/api/users/getuser");
-        setMovies(response.data);
-        console.log("movies=", movies)
+        setProfile(response.data);
+        console.log("profile=", profile)
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        console.error("Error fetching profile:", error);
         throw error; // Генерируем ошибку для передачи в jwtInterceptor
       }
     };
 
-    fetchMovies();
+    fetchProfile();
   }, [user, refreshToken]);
 
   return (
     <>
-      <Row xs={1} md={2} className="g-4">
-        {movies.map((movie) => (
-          <Card>
-            <Card.Body>
-              <Card.Title>{movie.email}</Card.Title>
-              <Card.Text>Genre: {movie.firstName}</Card.Text>
-            </Card.Body>
-          </Card>
-        ))}
-      </Row>
+      <Card>
+        <Card.Body>
+          <Card.Title>{profile.email}</Card.Title>
+          <Card.Text>First Name: {profile.firstName}</Card.Text>
+          <Card.Text>Last Name: {profile.lastName}</Card.Text>
+          <Card.Text>Birthday: {profile.birthDay}</Card.Text>
+        </Card.Body>
+      </Card>
     </>
   );
 };
 
-export default FavouriteMovie;
+export default UserProfile;

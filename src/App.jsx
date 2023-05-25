@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import { AuthContextProvider } from "./components/shared/AuthContext";
-import FavouriteMovie from "./pages/FavouriteMovie";
+import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
  
 function App() {
@@ -23,10 +23,10 @@ function App() {
               }
             ></Route>
             <Route
-              path="/fav-movies"
+              path="/user-profile"
               element={
                 <ProtectedRoute accessBy="authenticated">
-                  <FavouriteMovie />
+                  <UserProfile />
                 </ProtectedRoute>
               }
             ></Route>

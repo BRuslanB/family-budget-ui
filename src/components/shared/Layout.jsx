@@ -22,8 +22,8 @@ const Layout = ({ children }) => {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav>
             {user && (
-              <Nav.Link as={Link} to="/fav-movies">
-                Favourite Movie
+              <Nav.Link as={Link} to="/user-profile">
+                User Profile
               </Nav.Link>
             )}
           </Nav>

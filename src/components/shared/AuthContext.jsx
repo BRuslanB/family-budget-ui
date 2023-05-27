@@ -9,7 +9,11 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     if (localStorage.getItem("tokens")) {
       let tokens = JSON.parse(localStorage.getItem("tokens"));
-      return jwt_decode(tokens.access_token);
+      try {
+        return jwt_decode(tokens.access_token);
+      } catch(error) {
+        return null;
+      }
     }
     return null;
   });
@@ -17,7 +21,11 @@ export const AuthContextProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(() => {
     if (localStorage.getItem("tokens")) {
       let tokens = JSON.parse(localStorage.getItem("tokens"));
-      return jwt_decode(tokens.refresh_token);
+      try {
+        return jwt_decode(tokens.refresh_token);
+      } catch(error) {
+        return null;
+      }
     }
     return null;
   });
@@ -35,6 +43,14 @@ export const AuthContextProvider = ({ children }) => {
     navigate("/");
   };
   
+  const register = async (payload) => {
+    const apiResponse = await axios.post(
+      "http://localhost:8003/api/auth/signup",
+      payload
+    );
+    navigate("/");
+  };
+
   const logout = async () => {
     // invoke the logout API call, for our NestJS API no logout API
 
@@ -45,7 +61,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, refreshToken, login, logout }}>
+    <AuthContext.Provider value={{ user, refreshToken, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

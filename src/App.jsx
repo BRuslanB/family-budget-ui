@@ -3,8 +3,9 @@ import Layout from "./components/shared/Layout";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import { AuthContextProvider } from "./components/shared/AuthContext";
+import Register from "./pages/Register";
 import UserProfile from "./pages/UserProfile";
+import { AuthContextProvider } from "./components/shared/AuthContext";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
  
 function App() {
@@ -19,6 +20,14 @@ function App() {
               element={
                 <ProtectedRoute accessBy="non-authenticated">
                   <Login />
+                </ProtectedRoute>
+              }
+            ></Route>
+             <Route
+              path="/register"
+              element={
+                <ProtectedRoute accessBy="non-authenticated">
+                  <Register />
                 </ProtectedRoute>
               }
             ></Route>

@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
       <Navbar bg="primary" variant="dark">
         <Navbar.Brand>
           <Nav.Link as={Link} to="/">
-            Family Budget
+            Home
           </Nav.Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -33,7 +33,12 @@ const Layout = ({ children }) => {
                 Login
               </Nav.Link>
             )}
-            {user && <Nav.Link href="#">{user?.sub}</Nav.Link>}
+            {user && <Nav.Link href="#">{user?.fullname}</Nav.Link>}
+            {!user && (
+              <Nav.Link as={Link} to="/register">
+                Registration
+              </Nav.Link>
+            )}
           </Nav>
           {user && (
             <Button
@@ -48,7 +53,17 @@ const Layout = ({ children }) => {
           )}
         </Navbar.Collapse>
       </Navbar>
-      <Container>{children}</Container>
+      <div className="d-flex justify-content-center" 
+        style={{ minHeight: "600px", minWidth: "600px" }}>
+        <Container>{children}</Container>
+      </div>
+      <div className="row mt-3 py-2 bg-primary">
+          <div className="col-12 mx-auto">
+            <p className="text-light text-center my-auto">
+              Copyright &copy; 2023
+            </p>
+          </div>
+      </div>
     </>
   );
 };

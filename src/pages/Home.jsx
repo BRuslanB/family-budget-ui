@@ -1,19 +1,14 @@
-import Card from "react-bootstrap/Card";
-
 const Home = () => {
   return (
     <>
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: "500px", minWidth: "600px" }}
-      >
-        <Card>
-          <Card.Body>
-            <Card.Text className="text-center">
-              <b>Welcome! A Demo On ReactJS Authentication with JWT Token</b>
-            </Card.Text>
-          </Card.Body>
-        </Card>
+      <div className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "600px", minWidth: "600px" }}>
+        <div className="row mt-3 m-0">
+            <div className="col-12 mx-auto">
+                <img className="image" src="/images/family-budget-picture.jpg"
+                      width="100%" align="center" alt="background image"/>
+            </div>
+        </div>
       </div>
     </>
   );

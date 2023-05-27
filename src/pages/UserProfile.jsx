@@ -7,7 +7,7 @@ const UserProfile = () => {
   const { user, refreshToken } = useContext(AuthContext);
   const [profile, setProfile] = useState([]);
 
-  console.log("userSub:", user.sub);
+  console.log("userFullName:", user.fullname);
   console.log("refreshTokenUUID:", refreshToken.UUID);
 
   useEffect(() => {

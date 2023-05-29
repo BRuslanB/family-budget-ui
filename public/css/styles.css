@@ -1,0 +1,55 @@
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*height: 100vh; /* Занимает 100% высоты экрана */
+    /*width: 100%; /* Занимает всю доступную ширину */
+}
+  
+.image {
+    /* position: 0,0; */
+    width: 112%; 
+    /*height: 100%; */
+    object-fit: cover; /* Растягивается без искажений */
+}
+
+.bg_color_style {
+    background-color: RGB(174, 138, 126);
+}
+
+.button_style {
+    color: LightGrey;
+    border-style: none;
+    background-color: RGB(174, 138, 126);
+}
+
+.btn.button_style:focus {
+    color: white;
+    background-color: RGB(174, 138, 126);
+    box-shadow: none;
+    outline: none;
+}
+  
+.btn.button_style:hover,
+.btn.button_style:focus:not(:active) {
+    color: white;
+    background-color: RGB(133, 95, 82);
+}
+
+.dropdown-menu {
+    background-color: RGB(174, 138, 126);
+}
+  
+.dropdown-menu-style .dropdown-item {
+    color: LightGrey;
+}
+
+.dropdown-menu-style .dropdown-item:hover {
+    color: white;
+    background-color: RGB(133, 95, 82);
+}
+  
+.dropdown-menu-style .dropdown-item:active {
+    color: white;
+    background-color: RGB(133, 95, 82);
+}

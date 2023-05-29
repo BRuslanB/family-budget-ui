@@ -52,8 +52,9 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    // invoke the logout API call, for our NestJS API no logout API
-
+    const apiResponse = await axios.post(
+      "http://localhost:8003/api/auth/signout"
+    );
     localStorage.removeItem("tokens");
     setUser(null);
     setRefreshToken(null);

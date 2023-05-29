@@ -32,7 +32,7 @@ const Login = () => {
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" ref={password} required />
               </Form.Group>
-              <Button variant="primary" type="button" onClick={loginSubmit}>
+              <Button className="button_style" onClick={loginSubmit}>
                 SIGN IN
               </Button>
             </form>

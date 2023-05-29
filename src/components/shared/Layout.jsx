@@ -1,6 +1,5 @@
-import Navbar from "react-bootstrap/Navbar";
-import { Container, Button } from "react-bootstrap";
-import Nav from "react-bootstrap/Nav";
+import { Navbar, Nav, NavDropdown, Dropdown } from 'react-bootstrap';
+import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "./AuthContext";
@@ -12,7 +11,7 @@ const Layout = ({ children }) => {
   
   return (
     <>
-      <Navbar bg="primary" variant="dark">
+      <Navbar className="bg_color_style" variant="dark">
         <Navbar.Brand>
           <Nav.Link as={Link} to="/">
             Home
@@ -22,8 +21,15 @@ const Layout = ({ children }) => {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav>
             {user && (
-              <Nav.Link as={Link} to="/user-profile">
-                User Profile
+              <Nav.Link as={Link} to="/payments">
+                Payments
+              </Nav.Link>
+            )}
+          </Nav>
+          <Nav>
+            {user && (
+              <Nav.Link as={Link} to="/settings">
+                Settings
               </Nav.Link>
             )}
           </Nav>
@@ -33,31 +39,36 @@ const Layout = ({ children }) => {
                 Login
               </Nav.Link>
             )}
-            {user && <Nav.Link href="#">{user?.fullname}</Nav.Link>}
+            {user && (
+              <NavDropdown className="dropdown-menu-style" 
+                title={user?.fullname} id="basic-nav-dropdown">
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/profile">
+                    Edit Profile
+                </Dropdown.Item>
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/password">
+                    Change Password
+                </Dropdown.Item>
+                <Dropdown.Divider></Dropdown.Divider>
+                <Dropdown.Item className="dropdown-item-style" 
+                  onClick={() => logout()}>
+                    Logout
+                </Dropdown.Item>
+              </NavDropdown>
+            )}
             {!user && (
               <Nav.Link as={Link} to="/register">
                 Registration
               </Nav.Link>
             )}
           </Nav>
-          {user && (
-            <Button
-              variant="outline-success"
-              type="button"
-              onClick={() => {
-                logout();
-              }}
-            >
-              Logout
-            </Button>
-          )}
         </Navbar.Collapse>
       </Navbar>
-      <div className="d-flex justify-content-center" 
-        style={{ minHeight: "600px", minWidth: "600px" }}>
-        <Container>{children}</Container>
+      <div style={{ minHeight: "440px", minWidth: "600px" }}>
+        <Container className="p-0 m=0">{children}</Container>
       </div>
-      <div className="row mt-3 py-2 bg-primary">
+      <div className="row mt-2 py-2 bg_color_style">
           <div className="col-12 mx-auto">
             <p className="text-light text-center my-auto">
               Copyright &copy; 2023

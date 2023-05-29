@@ -56,7 +56,7 @@ const Register = () => {
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control type="password" ref={rePassword} required />
               </Form.Group>
-              <Button variant="primary" type="button" onClick={registerSubmit}>
+              <Button className="button_style" onClick={registerSubmit}>
                 SIGN UP
               </Button>
             </form>

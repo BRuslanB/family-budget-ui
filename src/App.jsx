@@ -1,12 +1,15 @@
 import "./App.css";
-import Layout from "./components/shared/Layout";
 import { Route, Routes } from "react-router-dom";
+import { AuthContextProvider } from "./components/shared/AuthContext";
+import Layout from "./components/shared/Layout";
+import ProtectedRoute from "./components/shared/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserProfile from "./pages/UserProfile";
-import { AuthContextProvider } from "./components/shared/AuthContext";
-import ProtectedRoute from "./components/shared/ProtectedRoute";
+import UserPassword from "./pages/UserPassword";
+import Payments from "./pages/Payments";
+import Settings from "./pages/Settings";
  
 function App() {
   return (
@@ -15,7 +18,23 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />}></Route>
-             <Route
+            <Route
+              path="/payments"
+              element={
+                <ProtectedRoute accessBy="authenticated">
+                  <Payments />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute accessBy="authenticated">
+                  <Settings />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
               path="/login"
               element={
                 <ProtectedRoute accessBy="non-authenticated">
@@ -23,7 +42,7 @@ function App() {
                 </ProtectedRoute>
               }
             ></Route>
-             <Route
+            <Route
               path="/register"
               element={
                 <ProtectedRoute accessBy="non-authenticated">
@@ -32,10 +51,18 @@ function App() {
               }
             ></Route>
             <Route
-              path="/user-profile"
+              path="/profile"
               element={
                 <ProtectedRoute accessBy="authenticated">
                   <UserProfile />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="/password"
+              element={
+                <ProtectedRoute accessBy="authenticated">
+                  <UserPassword />
                 </ProtectedRoute>
               }
             ></Route>

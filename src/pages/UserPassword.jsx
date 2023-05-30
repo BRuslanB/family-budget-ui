@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -10,6 +10,7 @@ const UserPassword = () => {
   const password = useRef("");
   const newPassword = useRef("");
   const rePassword = useRef("");
+  const [formError, setFormError] = useState("");
 
   const updatePassword = async () => {
     try {
@@ -21,18 +22,34 @@ const UserPassword = () => {
         rePassword: rePassword.current.value
       };
       const response = await axiosInstance.put(
-        "http://localhost:8003/api/users/password", 
+        "http://localhost:8003/api/users/password",
         payload
       );
       console.log("Password updated:", response.data);
+      alert(response.data.message); // Display the response messagee
+      navigate("/");
     } catch (error) {
       console.error("Error updating password:", error);
+      // Clear input fields
+      password.current.value = "";
+      newPassword.current.value = "";
+      rePassword.current.value = "";
+      setFormError(error.response.data.message);
     }
   };
 
   const passwordSubmit = async (e) => {
     e.preventDefault();
-    await updatePassword();
+    setFormError(""); // Clear previous form error
+    if (
+      password.current.value.trim() === "" ||
+      newPassword.current.value.trim() === "" ||
+      rePassword.current.value.trim() === ""
+    ) {
+      setFormError("Please fill in all the required fields.");
+    } else {
+      await updatePassword();
+    }
   };
 
   return (
@@ -44,16 +61,17 @@ const UserPassword = () => {
             <form>
               <Form.Group className="mb-2" controlId="formOldPassword">
                 <Form.Label>Old Password</Form.Label>
-                <Form.Control type="password" ref={password} required />
+                <Form.Control type="password" ref={password} />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formNewPassword">
                 <Form.Label>New Password</Form.Label>
-                <Form.Control type="password" ref={newPassword} required />
+                <Form.Control type="password" ref={newPassword} />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formRePassword">
                 <Form.Label>Confirm Password</Form.Label>
-                <Form.Control type="password" ref={rePassword} required />
+                <Form.Control type="password" ref={rePassword} />
               </Form.Group>
+              {formError && <div className="text-danger">{formError}</div>}
               <Button className="button_style" onClick={passwordSubmit}>
                 UPDATE
               </Button>

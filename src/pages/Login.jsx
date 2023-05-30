@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -7,6 +7,7 @@ import AuthContext from "../components/shared/AuthContext";
 const Login = () => {
   const userEmail = useRef("");
   const password = useRef("");
+  const [formError, setFormError] = useState("");
   const {login}= useContext(AuthContext)
  
   const loginSubmit = async () => {
@@ -14,7 +15,23 @@ const Login = () => {
       email: userEmail.current.value,
       password: password.current.value
     }
-    await login(payload);
+    setFormError(""); // Clear previous form error
+    try {
+      if (
+        userEmail.current.value.trim() === "" ||
+        password.current.value.trim() === ""
+      ) {
+        setFormError("Please fill in all the required fields.");
+      } else {
+        await login(payload);
+      }
+    } catch (error) {
+      console.error("Error signin:", error);
+      // Clear input fields
+      userEmail.current.value = "";
+      password.current.value = "";
+      setFormError(error.response.data.message);
+    }
   };
   
   return (
@@ -26,12 +43,13 @@ const Login = () => {
             <form>
               <Form.Group className="mb-2" controlId="formUserEmail">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="text" ref={userEmail} required />
+                <Form.Control type="text" ref={userEmail} />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" ref={password} required />
+                <Form.Control type="password" ref={password} />
               </Form.Group>
+              {formError && <div className="text-danger">{formError}</div>}
               <Button className="button_style" onClick={loginSubmit}>
                 SIGN IN
               </Button>

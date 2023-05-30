@@ -1,6 +1,6 @@
 import axios from "axios";
-import { createContext, useState } from "react";
 import jwt_decode from "jwt-decode";
+import { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
@@ -48,6 +48,7 @@ export const AuthContextProvider = ({ children }) => {
       "http://localhost:8003/api/auth/signup",
       payload
     );
+    alert(apiResponse.data.message); // Display the response messagee
     navigate("/");
   };
 
@@ -62,7 +63,8 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, refreshToken, login, register, logout }}>
+    <AuthContext.Provider value={{ user, refreshToken, 
+      setUser, setRefreshToken, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

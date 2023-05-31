@@ -1,77 +1,38 @@
-import axios from "axios";
-import jwt_decode from "jwt-decode";
-import { useContext, useRef, useEffect, useState } from "react";
+import { useContext, useRef, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useUserContext } from "../components/shared/UserContext";
+import { useFormErrorContext } from '../components/shared/FormErrorContext';
+import AuthContext from "../components/shared/AuthContext";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import createJwtInterceptor from "../components/shared/jwtInterceptor";
-import AuthContext from "../components/shared/AuthContext";
 
-const UserProfile = () => {
-  const { user, refreshToken, setUser, setRefreshToken } = useContext(AuthContext);
+export const UserProfile = () => {
+  const { formError, setFormError } = useFormErrorContext();
+  useEffect(() => {
+    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
+  }, []);
+  console.log("UserProfile1.formError=",formError);
+  
+  const { userProfile, fetchUserProfile, updateProfile } = useUserContext();
+  const { user, refreshToken } = useContext(AuthContext);
   const firstName = useRef("");
   const lastName = useRef("");
   const birthDay = useRef("");
-  const [formError, setFormError] = useState("");
-
-  const fetchUser = async () => {
-    try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
-      const axiosInstance = interceptor;
-      const response = await axiosInstance.get("http://localhost:8003/api/users/getuser");
-      const userData = response.data;
-      if (userData) {
-        firstName.current.value = userData.firstName || "";
-        lastName.current.value = userData.lastName || "";
-        birthDay.current.value = userData.birthDay || "";
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
 
   useEffect(() => {
-    fetchUser();
-  }, [user, refreshToken, setUser, setRefreshToken]);
-
-  const fetchProfile = async (payload) => {
-    try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
-      const axiosInstance = interceptor;
-      const response = await axiosInstance.put(
-        "http://localhost:8003/api/users/profile",
-        payload
-      );
-      console.log("Profile saved:", response.data);
-      alert(response.data.message); // Display the response messagee
-
-      // Отправка запроса на обновление токенов
-      const refreshResponse = await axios.post(
-        "http://localhost:8003/api/auth/refreshtoken",
-        {
-          email: user?.sub,
-          tokenUUID: refreshToken?.UUID
-        },
-        {
-          headers: {
-            "Refresh-Token": `Bearer ${refreshToken}`,
-          },
-        }
-      );
-      console.log("refreshResponse:", refreshResponse.data);
-
-      // Обновление токенов в localStorage и в приложении
-      localStorage.setItem("tokens", JSON.stringify(refreshResponse.data));
-      setUser(jwt_decode(refreshResponse.data.access_token));
-      setRefreshToken(jwt_decode(refreshResponse.data.refresh_token));
-      navigate("/");
-      
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      setFormError(error.response.data.message);
+    if (user && refreshToken && !userProfile) {
+      fetchUserProfile();
     }
-  };
-  
+  }, [user, refreshToken, userProfile, fetchUserProfile]);
+
+  useEffect(() => {
+    if (userProfile && firstName.current && lastName.current && birthDay.current) {
+      firstName.current.value = userProfile.firstName || "";
+      lastName.current.value = userProfile.lastName || "";
+      birthDay.current.value = userProfile.birthDay || "";
+    }
+  }, [userProfile, firstName.current, lastName.current, birthDay.current]);
+
   const profileSubmit = async () => {
     const payload = {
       firstName: firstName.current.value,
@@ -86,7 +47,8 @@ const UserProfile = () => {
     ) {
       setFormError("Please fill in all the required fields.");
     } else {
-      await fetchProfile(payload);
+      await updateProfile(payload);
+      console.log("UserProfile2.formError=",formError)
     }
   };
 
@@ -99,8 +61,12 @@ const UserProfile = () => {
             <form>
               <Form.Group className="mb-2" controlId="formUserEmail">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="text" defaultValue={user?.sub} readOnly 
-                  style={{ backgroundColor: "lightgray" }} />
+                <Form.Control
+                  type="text"
+                  defaultValue={user?.sub}
+                  readOnly
+                  style={{ backgroundColor: "lightgray" }}
+                />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formUserFirstName">
                 <Form.Label>First Name</Form.Label>

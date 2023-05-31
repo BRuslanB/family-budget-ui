@@ -1,6 +1,8 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { AuthContextProvider } from "./components/shared/AuthContext";
+import { UserContextProvider } from "./components/shared/UserContext"; 
+import { FormErrorContextProvider } from "./components/shared/FormErrorContext"; 
 import Layout from "./components/shared/Layout";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 import Home from "./pages/Home";
@@ -14,61 +16,65 @@ import Settings from "./pages/Settings";
 function App() {
   return (
     <>
-      <AuthContextProvider>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />}></Route>
-            <Route
-              path="/payments"
-              element={
-                <ProtectedRoute accessBy="authenticated">
-                  <Payments />
-                </ProtectedRoute>
-              }
-            ></Route>
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute accessBy="authenticated">
-                  <Settings />
-                </ProtectedRoute>
-              }
-            ></Route>
-            <Route
-              path="/login"
-              element={
-                <ProtectedRoute accessBy="non-authenticated">
-                  <Login />
-                </ProtectedRoute>
-              }
-            ></Route>
-            <Route
-              path="/register"
-              element={
-                <ProtectedRoute accessBy="non-authenticated">
-                  <Register />
-                </ProtectedRoute>
-              }
-            ></Route>
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute accessBy="authenticated">
-                  <UserProfile />
-                </ProtectedRoute>
-              }
-            ></Route>
-            <Route
-              path="/password"
-              element={
-                <ProtectedRoute accessBy="authenticated">
-                  <UserPassword />
-                </ProtectedRoute>
-              }
-            ></Route>
-          </Routes>
-        </Layout>
-      </AuthContextProvider>
+      <FormErrorContextProvider>
+        <AuthContextProvider>
+          <UserContextProvider>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />}></Route>
+                <Route
+                  path="/payments"
+                  element={
+                    <ProtectedRoute accessBy="authenticated">
+                      <Payments />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute accessBy="authenticated">
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/login"
+                  element={
+                    <ProtectedRoute accessBy="non-authenticated">
+                      <Login />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/register"
+                  element={
+                    <ProtectedRoute accessBy="non-authenticated">
+                      <Register />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute accessBy="authenticated">
+                      <UserProfile />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/password"
+                  element={
+                    <ProtectedRoute accessBy="authenticated">
+                      <UserPassword />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+              </Routes>
+            </Layout>
+          </UserContextProvider>
+        </AuthContextProvider>
+      </FormErrorContextProvider>
     </>
   );
 }

@@ -20,7 +20,6 @@ const createJwtInterceptor = (userSub, refreshTokenUUID) => {
       return response;
     },
     async (error) => {
-      console.log("typeof error", typeof error);
       console.log("error", error);
 
       if (error.response && error.response.status === 403) {

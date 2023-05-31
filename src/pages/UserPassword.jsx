@@ -1,45 +1,28 @@
-import { useContext, useRef, useState } from "react";
+import { useRef, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useUserContext } from "../components/shared/UserContext";
+import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import createJwtInterceptor from "../components/shared/jwtInterceptor";
-import AuthContext from "../components/shared/AuthContext";
 
-const UserPassword = () => {
-  const { user, refreshToken } = useContext(AuthContext);
+export const UserPassword = () => {
+  const { formError, setFormError } = useFormErrorContext();
+  useEffect(() => {
+    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
+  }, []);
+  console.log("UserPassword1.formError=",formError);
+
+  const { updatePassword } = useUserContext();
   const password = useRef("");
   const newPassword = useRef("");
   const rePassword = useRef("");
-  const [formError, setFormError] = useState("");
-
-  const updatePassword = async () => {
-    try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
-      const axiosInstance = interceptor;
-      const payload = {
-        password: password.current.value,
-        newPassword: newPassword.current.value,
-        rePassword: rePassword.current.value
-      };
-      const response = await axiosInstance.put(
-        "http://localhost:8003/api/users/password",
-        payload
-      );
-      console.log("Password updated:", response.data);
-      alert(response.data.message); // Display the response messagee
-      navigate("/");
-    } catch (error) {
-      console.error("Error updating password:", error);
-      // Clear input fields
-      password.current.value = "";
-      newPassword.current.value = "";
-      rePassword.current.value = "";
-      setFormError(error.response.data.message);
-    }
-  };
-
-  const passwordSubmit = async (e) => {
-    e.preventDefault();
+  
+  const passwordSubmit = async () => {
+    const payload = {
+      password: password.current.value,
+      newPassword: newPassword.current.value,
+      rePassword: rePassword.current.value
+    };    
     setFormError(""); // Clear previous form error
     if (
       password.current.value.trim() === "" ||
@@ -48,7 +31,12 @@ const UserPassword = () => {
     ) {
       setFormError("Please fill in all the required fields.");
     } else {
-      await updatePassword();
+      await updatePassword(payload);
+      // Clear input fields
+      password.current.value = "";
+      newPassword.current.value = "";
+      rePassword.current.value = "";
+      console.log("UserPassword2.formError=", formError);
     }
   };
 

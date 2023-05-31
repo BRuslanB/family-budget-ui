@@ -1,17 +1,23 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import AuthContext from "../components/shared/AuthContext";
 
 const Register = () => {
+  const { formError, setFormError } = useFormErrorContext();
+  useEffect(() => {
+    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
+  }, []);
+  console.log("Register1.formError=",formError);
+
   const userEmail = useRef("");
   const firstName = useRef("");
   const lastName = useRef("");
   const birthDay = useRef("");
   const password = useRef("");
   const rePassword = useRef("");
-  const [formError, setFormError] = useState("");
   const {register}= useContext(AuthContext)
  
   const registerSubmit = async () => {
@@ -24,21 +30,17 @@ const Register = () => {
       rePassword: rePassword.current.value
     }
     setFormError(""); // Clear previous form error
-    try {
-      if (
-        userEmail.current.value.trim() === "" ||
-        firstName.current.value.trim() === "" ||
-        lastName.current.value.trim() === "" ||
-        birthDay.current.value.trim() === "" ||
-        password.current.value.trim() === "" ||
-        rePassword.current.value.trim() === ""
-      ) {
-        setFormError("Please fill in all the required fields.");
-      } else {
-        await register(payload);
-      }
-    } catch (error) {
-      console.error("Error signin:", error);
+    if (
+      userEmail.current.value.trim() === "" ||
+      firstName.current.value.trim() === "" ||
+      lastName.current.value.trim() === "" ||
+      birthDay.current.value.trim() === "" ||
+      password.current.value.trim() === "" ||
+      rePassword.current.value.trim() === ""
+    ) {
+      setFormError("Please fill in all the required fields.");
+    } else {
+      await register(payload);
       // Clear input fields
       userEmail.current.value = "";
       firstName.current.value = "";
@@ -46,7 +48,7 @@ const Register = () => {
       birthDay.current.value = "";
       password.current.value = "";
       rePassword.current.value = "";
-      setFormError(error.response.data.message);
+      console.log("Register2.formError=", formError);
     }
   };
   

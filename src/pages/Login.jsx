@@ -1,13 +1,19 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import AuthContext from "../components/shared/AuthContext";
 
 const Login = () => {
+  const { formError, setFormError } = useFormErrorContext();
+  useEffect(() => {
+    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
+  }, []);
+  console.log("Login1.formError=",formError);
+
   const userEmail = useRef("");
   const password = useRef("");
-  const [formError, setFormError] = useState("");
   const {login}= useContext(AuthContext)
  
   const loginSubmit = async () => {
@@ -16,7 +22,6 @@ const Login = () => {
       password: password.current.value
     }
     setFormError(""); // Clear previous form error
-    try {
       if (
         userEmail.current.value.trim() === "" ||
         password.current.value.trim() === ""
@@ -24,13 +29,9 @@ const Login = () => {
         setFormError("Please fill in all the required fields.");
       } else {
         await login(payload);
-      }
-    } catch (error) {
-      console.error("Error signin:", error);
-      // Clear input fields
-      userEmail.current.value = "";
-      password.current.value = "";
-      setFormError(error.response.data.message);
+        // Clear input fields
+        userEmail.current.value = "";
+        password.current.value = "";
     }
   };
   

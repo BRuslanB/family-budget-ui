@@ -8,6 +8,7 @@ import Form from "react-bootstrap/Form";
 
 export const UserProfile = () => {
   const { formError, setFormError } = useFormErrorContext();
+  
   useEffect(() => {
     setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
   }, []);

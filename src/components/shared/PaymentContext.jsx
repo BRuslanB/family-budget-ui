@@ -1,10 +1,20 @@
 import axios from 'axios';
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useFormErrorContext } from './FormErrorContext';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from "./AuthContext";
+import createJwtInterceptor from "./jwtInterceptor";
 // Дополнительные импорты и функции, связанные с PaymentContext
 
 const PaymentContext = createContext();
 
 export const PaymentContextProvider = ({ children }) => {
+  const { formError, setFormError } = useFormErrorContext();
+  useEffect(() => {
+    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
+  }, []);
+  console.log("PaymentContext1.formError=",formError);
+
   const [payments, setPayments] = useState([]);
 
   useEffect(() => {
@@ -30,7 +40,8 @@ export const PaymentContextProvider = ({ children }) => {
   // Дополнительные функции, связанные с платежами
 
   return (
-    <PaymentContext.Provider value={{ payments, createPayment }}>
+    <PaymentContext.Provider value={{ payments, formError, setFormError, 
+      fetchPayments, createPayment }}>
       {children}
     </PaymentContext.Provider>
   );

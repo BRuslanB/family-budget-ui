@@ -10,17 +10,17 @@ const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  console.log("UserContext1.formError=",formError);
+  console.log("UserContext1.formError=", formError);
 
   const [userProfile, setUserProfile] = useState(null);
   const { user, refreshToken, setUser, setRefreshToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // useEffect(() => { //попробывать отключить
-  //   if (user && refreshToken) {
-  //     fetchUserProfile();
-  //   }
-  // }, [user, refreshToken]);
+  useEffect(() => { 
+    if (user && refreshToken) { //обновлять при изменение user или refreshToken
+      fetchUserProfile();
+    }
+  }, [user, refreshToken]);
 
   const fetchUserProfile = async () => {
     try {
@@ -103,8 +103,8 @@ export const UserContextProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ userProfile, formError, 
-      setFormError, fetchUserProfile, updateProfile, updatePassword }}>
+    <UserContext.Provider value={{ userProfile, formError, setFormError, 
+      fetchUserProfile, updateProfile, updatePassword }}>
       {children}
     </UserContext.Provider>
   );

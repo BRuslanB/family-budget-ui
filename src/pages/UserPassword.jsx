@@ -7,10 +7,11 @@ import Form from "react-bootstrap/Form";
 
 export const UserPassword = () => {
   const { formError, setFormError } = useFormErrorContext();
+  
   useEffect(() => {
     setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
   }, []);
-  console.log("UserPassword1.formError=",formError);
+  console.log("UserPassword1.formError=", formError);
 
   const { updatePassword } = useUserContext();
   const password = useRef("");

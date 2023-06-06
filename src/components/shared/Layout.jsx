@@ -28,9 +28,25 @@ const Layout = ({ children }) => {
           </Nav>
           <Nav>
             {user && (
-              <Nav.Link as={Link} to="/settings">
-                Settings
-              </Nav.Link>
+              <NavDropdown className="dropdown-menu-style" 
+                title="Settings" id="nav-dropdown-settings">
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/categories">
+                    Expense Category
+                </Dropdown.Item>
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/expenses">
+                    Expense
+                </Dropdown.Item>
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/incomes">
+                    Income
+                </Dropdown.Item>
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/actors">
+                    Actor
+                </Dropdown.Item>
+              </NavDropdown>
             )}
           </Nav>
           <Nav className="ms-auto">
@@ -41,7 +57,7 @@ const Layout = ({ children }) => {
             )}
             {user && (
               <NavDropdown className="dropdown-menu-style" 
-                title={user?.fullname} id="basic-nav-dropdown">
+                title={user?.fullname} id="nav-dropdown-user">
                 <Dropdown.Item className="dropdown-item-style" 
                   as={Link} to="/profile">
                     Edit Profile

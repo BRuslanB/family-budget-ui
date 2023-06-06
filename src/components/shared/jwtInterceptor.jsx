@@ -41,14 +41,18 @@ const createJwtInterceptor = (userSub, refreshTokenUUID) => {
 
           localStorage.setItem("tokens", JSON.stringify(apiResponse.data));
           error.config.headers["Authorization"] = `Bearer ${apiResponse.data.access_token}`;
-          console.log("Request with refreshed token:", error.config); // Выводим конфигурацию запроса с обновленным токеном
-          return createJwtInterceptor(userSub, refreshTokenUUID)(error.config); // Используем createJwtInterceptor для выполнения запроса с обновленным токеном
+          // Выводим конфигурацию запроса с обновленным токеном
+          console.log("Request with refreshed token:", error.config); 
+           // Используем createJwtInterceptor для выполнения запроса с обновленным токеном
+           return createJwtInterceptor(userSub, refreshTokenUUID)(error.config);
         } catch (error) {
           console.error("Token refresh error:", error);
+          alert("Reauthorization error.\n Please log in again.");
           return Promise.reject(error);
         }
       } else {
         console.error("Network Error:", error);
+        alert("Connection to server lost.\n Please contact technical support.");
         return Promise.reject(error);
       }
     }

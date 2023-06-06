@@ -7,6 +7,7 @@ import AuthContext from "../components/shared/AuthContext";
 
 const Login = () => {
   const { formError, setFormError } = useFormErrorContext();
+  
   useEffect(() => {
     setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
   }, []);

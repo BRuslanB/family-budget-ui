@@ -17,6 +17,30 @@
     background-color: RGB(174, 138, 126);
 }
 
+.button_style_add {
+    color: black;
+    font-weight: bold;
+    border-style: none;
+    background-color: transparent;
+}
+
+/* .btn.button_style_add:focus {
+    color: firebrick;
+    border-style: none;
+    background-color: transparent;
+    box-shadow: none;
+    outline: none;
+} */
+
+.btn.button_style_add:hover,
+.btn.button_style_add:focus:not(:active) {
+    color: rgb(0, 90, 0);
+    border-style: none;
+    background-color: transparent;
+    box-shadow: none;
+    outline: none;
+}
+
 .button_style {
     color: LightGrey;
     border-style: none;

@@ -8,8 +8,8 @@ const Payments = () => {
   const { user, refreshToken } = useContext(AuthContext);
   const [profile, setProfile] = useState([]);
 
-  console.log("userFullName:", user.fullname);
-  console.log("refreshTokenUUID:", refreshToken.UUID);
+  // console.log("userFullName:", user.fullname);
+  // console.log("refreshTokenUUID:", refreshToken.UUID);
 
   useEffect(() => {
     const fetchProfile = async () => {

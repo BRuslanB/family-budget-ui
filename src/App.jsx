@@ -1,8 +1,13 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
+import { FormErrorContextProvider } from "./components/shared/FormErrorContext"; 
 import { AuthContextProvider } from "./components/shared/AuthContext";
 import { UserContextProvider } from "./components/shared/UserContext"; 
-import { FormErrorContextProvider } from "./components/shared/FormErrorContext"; 
+import { CategoryContextProvider } from "./components/shared/CategoryContext"; 
+import { ExpenseContextProvider } from "./components/shared/ExpenseContext"; 
+import { IncomeContextProvider } from "./components/shared/IncomeContext"; 
+import { ActorContextProvider } from "./components/shared/ActorContext"; 
+import { CheckContextProvider } from "./components/shared/CheckContext"; 
 import Layout from "./components/shared/Layout";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 import Home from "./pages/Home";
@@ -10,15 +15,17 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserProfile from "./pages/UserProfile";
 import UserPassword from "./pages/UserPassword";
-import Payments from "./pages/Payments";
-import Settings from "./pages/Settings";
+import Checks from "./pages/Checks";
+import Categories from "./pages/Categories";
+import Expenses from "./pages/Expenses";
+import Incomes from "./pages/Incomes";
+import Actors from "./pages/Actors";
  
 function App() {
   return (
     <>
       <FormErrorContextProvider>
         <AuthContextProvider>
-          <UserContextProvider>
             <Layout>
               <Routes>
                 <Route path="/" element={<Home />}></Route>
@@ -26,18 +33,60 @@ function App() {
                   path="/payments"
                   element={
                     <ProtectedRoute accessBy="authenticated">
-                      <Payments />
+                      <IncomeContextProvider>
+                        <ExpenseContextProvider>
+                          <ActorContextProvider>
+                            <CheckContextProvider>
+                              <Checks />
+                            </CheckContextProvider>
+                          </ActorContextProvider>
+                        </ExpenseContextProvider>
+                      </IncomeContextProvider>
                     </ProtectedRoute>
                   }
                 ></Route>
                 <Route
-                  path="/settings"
+                  path="/categories"
                   element={
                     <ProtectedRoute accessBy="authenticated">
-                      <Settings />
+                      <CategoryContextProvider>
+                        <Categories />
+                      </CategoryContextProvider>
                     </ProtectedRoute>
                   }
-                ></Route>
+                  ></Route>
+                <Route
+                  path="/expenses"
+                  element={
+                    <ProtectedRoute accessBy="authenticated">
+                      <CategoryContextProvider>
+                        <ExpenseContextProvider>
+                          <Expenses />
+                        </ExpenseContextProvider>
+                      </CategoryContextProvider>
+                    </ProtectedRoute>
+                  }
+                  ></Route>
+                <Route
+                  path="/incomes"
+                  element={
+                    <ProtectedRoute accessBy="authenticated">
+                      <IncomeContextProvider>
+                        <Incomes />
+                      </IncomeContextProvider>
+                    </ProtectedRoute>
+                  }
+                  ></Route>
+                <Route
+                  path="/actors"
+                  element={
+                    <ProtectedRoute accessBy="authenticated">
+                      <ActorContextProvider>
+                        <Actors />
+                      </ActorContextProvider>
+                    </ProtectedRoute>
+                  }
+                  ></Route>
                 <Route
                   path="/login"
                   element={
@@ -58,7 +107,9 @@ function App() {
                   path="/profile"
                   element={
                     <ProtectedRoute accessBy="authenticated">
-                      <UserProfile />
+                      <UserContextProvider>
+                        <UserProfile />
+                      </UserContextProvider>
                     </ProtectedRoute>
                   }
                 ></Route>
@@ -66,13 +117,14 @@ function App() {
                   path="/password"
                   element={
                     <ProtectedRoute accessBy="authenticated">
-                      <UserPassword />
+                      <UserContextProvider>
+                        <UserPassword />
+                      </UserContextProvider>
                     </ProtectedRoute>
                   }
                 ></Route>
               </Routes>
             </Layout>
-          </UserContextProvider>
         </AuthContextProvider>
       </FormErrorContextProvider>
     </>

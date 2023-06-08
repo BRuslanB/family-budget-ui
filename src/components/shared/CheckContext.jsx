@@ -7,11 +7,11 @@ const CheckContext = createContext();
 
 export const CheckContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  console.log("CheckContext1.formError=", formError);
+  // console.log("CheckContext1.formError=", formError);
 
   const [checkList, setCheckList] = useState([]);
   const [check, setCheck] = useState(null);
-  const { user, refreshToken } = useContext(AuthContext);
+  const { user, refreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchCheckList();
@@ -19,7 +19,7 @@ export const CheckContextProvider = ({ children }) => {
 
   const fetchCheckList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/checks'
@@ -32,14 +32,14 @@ export const CheckContextProvider = ({ children }) => {
       console.error('Error fetching check:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CheckContext2.formError=", formError);
+        // console.log("CheckContext2.formError=", formError);
       }
     }
   };
 
   const fetchCheck = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/checks/${id}`
@@ -52,14 +52,14 @@ export const CheckContextProvider = ({ children }) => {
       console.error('Error fetching check:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CheckContext3.formError=", formError);
+        // console.log("CheckContext3.formError=", formError);
       }
     }
   };
 
   const createCheck = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/checks",
@@ -72,14 +72,14 @@ export const CheckContextProvider = ({ children }) => {
       console.error("Error creating check:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CheckContext4.formError=", formError);
+        // console.log("CheckContext4.formError=", formError);
       }
     }
   };
 
   const updateCheck = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/checks",
@@ -92,14 +92,14 @@ export const CheckContextProvider = ({ children }) => {
       console.error("Error updating check:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CheckContext5.formError=", formError);
+        // console.log("CheckContext5.formError=", formError);
       }
     }
   };
 
   const deleteCheck = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/checks/${id}`
@@ -111,7 +111,7 @@ export const CheckContextProvider = ({ children }) => {
       console.error("Error deleting check:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CheckContext6.formError=", formError);
+        // console.log("CheckContext6.formError=", formError);
       }
     }
   };

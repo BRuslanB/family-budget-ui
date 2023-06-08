@@ -7,11 +7,11 @@ const CategoryContext = createContext();
 
 export const CategoryContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  console.log("CategoryContext1.formError=", formError);
+  // console.log("CategoryContext1.formError=", formError);
 
   const [categoryList, setCategoryList] = useState([]);
   const [category, setCategory] = useState(null);
-  const { user, refreshToken } = useContext(AuthContext);
+  const { user, refreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchCategoryList();
@@ -19,7 +19,7 @@ export const CategoryContextProvider = ({ children }) => {
 
   const fetchCategoryList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/categories'
@@ -32,14 +32,14 @@ export const CategoryContextProvider = ({ children }) => {
       console.error('Error fetching category:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CategoryContext2.formError=", formError);
+        // console.log("CategoryContext2.formError=", formError);
       }
     }
   };
 
   const fetchCategory = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/categories/${id}`
@@ -52,14 +52,14 @@ export const CategoryContextProvider = ({ children }) => {
       console.error('Error fetching category:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CategoryContext3.formError=", formError);
+        // console.log("CategoryContext3.formError=", formError);
       }
     }
   };
 
   const createCategory = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/categories",
@@ -72,14 +72,14 @@ export const CategoryContextProvider = ({ children }) => {
       console.error("Error creating category:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CategoryContext4.formError=", formError);
+        // console.log("CategoryContext4.formError=", formError);
       }
     }
   };
 
   const updateCategory = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/categories",
@@ -92,14 +92,14 @@ export const CategoryContextProvider = ({ children }) => {
       console.error("Error updating category:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CategoryContext5.formError=", formError);
+        // console.log("CategoryContext5.formError=", formError);
       }
     }
   };
 
   const deleteCategory = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/categories/${id}`
@@ -111,7 +111,7 @@ export const CategoryContextProvider = ({ children }) => {
       console.error("Error deleting category:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("CategoryContext6.formError=", formError);
+        // console.log("CategoryContext6.formError=", formError);
       }
     }
   };

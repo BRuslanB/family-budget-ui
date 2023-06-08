@@ -4,16 +4,17 @@ import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
 
 const Categories = () => {
+
   const { formError, setFormError } = useFormErrorContext();
   const { category, categoryList, fetchCategory, fetchCategoryList, createCategory, updateCategory, deleteCategory } = useCategoryContext();
-
-  const categoryId = useRef("");
 
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryDescription, setNewCategoryDescription] = useState("");
   const [deleteCategoryId, setDeleteCategoryId] = useState("");
+
+  const categoryId = useRef("");
 
   useEffect(() => {
     setFormError(""); // Clear previous form error on component mount
@@ -29,7 +30,13 @@ const Categories = () => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
     setModalTitle(title);
   };
-  
+
+  const handleModalHide = () => {
+    setNewCategoryName("");
+    setNewCategoryDescription("");
+    handleToggleModal("", true);
+  };
+
   const handleAddCategory = async () => {
     setFormError(""); // Clear previous form error
 
@@ -42,8 +49,6 @@ const Categories = () => {
       };
       await createCategory(payload);
 
-      setNewCategoryName("");
-      setNewCategoryDescription("");
       handleToggleModal("");
       fetchCategoryList(); // Updating the list after successful addition
     }
@@ -70,8 +75,6 @@ const Categories = () => {
       };
       await updateCategory(payload);
 
-      setNewCategoryName("");
-      setNewCategoryDescription("");
       categoryId.current = "";
       handleToggleModal("");
       fetchCategoryList(); // Updating the list after successful editing
@@ -124,7 +127,7 @@ const Categories = () => {
           ))}
         </Row>
       </Container>
-      <Modal show={showModal} onHide={() => handleToggleModal("", true)}>
+      <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
@@ -183,7 +186,7 @@ const Categories = () => {
         )}
         <Modal.Footer>
           {formError && <div className="text-danger col-12">{formError}</div>}
-          <Button variant="secondary" onClick={() => handleToggleModal("", true)}>
+          <Button variant="secondary" onClick={handleModalHide}>
             Cancel
           </Button>
           {modalTitle === "Add Category" && (

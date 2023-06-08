@@ -7,11 +7,11 @@ const ActorContext = createContext();
 
 export const ActorContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  console.log("ActorContext1.formError=", formError);
+  // console.log("ActorContext1.formError=", formError);
 
   const [actorList, setActorList] = useState([]);
   const [actor, setActor] = useState(null);
-  const { user, refreshToken } = useContext(AuthContext);
+  const { user, refreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchActorList();
@@ -19,7 +19,7 @@ export const ActorContextProvider = ({ children }) => {
 
   const fetchActorList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/actors'
@@ -32,14 +32,14 @@ export const ActorContextProvider = ({ children }) => {
       console.error('Error fetching actor:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ActorContext2.formError=", formError);
+        // console.log("ActorContext2.formError=", formError);
       }
     }
   };
 
   const fetchActor = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/actors/${id}`
@@ -52,14 +52,14 @@ export const ActorContextProvider = ({ children }) => {
       console.error('Error fetching actor:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ActorContext3.formError=", formError);
+        // console.log("ActorContext3.formError=", formError);
       }
     }
   };
 
   const createActor = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/actors",
@@ -72,14 +72,14 @@ export const ActorContextProvider = ({ children }) => {
       console.error("Error creating actor:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ActorContext4.formError=", formError);
+        // console.log("ActorContext4.formError=", formError);
       }
     }
   };
 
   const updateActor = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/actors",
@@ -92,14 +92,14 @@ export const ActorContextProvider = ({ children }) => {
       console.error("Error updating actor:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ActorContext5.formError=", formError);
+        // console.log("ActorContext5.formError=", formError);
       }
     }
   };
 
   const deleteActor = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/actors/${id}`
@@ -111,7 +111,7 @@ export const ActorContextProvider = ({ children }) => {
       console.error("Error deleting actor:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ActorContext6.formError=", formError);
+        // console.log("ActorContext6.formError=", formError);
       }
     }
   };

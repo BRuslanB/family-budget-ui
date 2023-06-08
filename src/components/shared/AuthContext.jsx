@@ -8,7 +8,7 @@ const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  console.log("AuthContext1.formError=",formError);
+  // console.log("AuthContext1.formError=", formError);
 
   const [user, setUser] = useState(() => {
     if (localStorage.getItem("tokens")) {
@@ -46,16 +46,19 @@ export const AuthContextProvider = ({ children }) => {
       setUser(jwt_decode(apiResponse.data.access_token));
       setRefreshToken(jwt_decode(apiResponse.data.refresh_token));
       navigate("/");
-  
     } catch (error) {
       console.error("Error signin:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("AuthContext2.formError=", formError);
+        // console.log("AuthContext2.formError=", formError);
+      } else if (error.code === "ERR_NETWORK") {
+        console.error("Network Error:", error);
+        alert("Connection to server lost.\nPlease contact technical support.");
+        logout();
       }
     }
   };
-  
+
   const register = async (payload) => {
     try {
       const apiResponse = await axios.post(
@@ -69,15 +72,23 @@ export const AuthContextProvider = ({ children }) => {
       console.error("Error signin:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("AuthContext3.formError=", formError);
+        // console.log("AuthContext3.formError=", formError);
+      } else if (error.code === "ERR_NETWORK") {
+        console.error("Network Error:", error);
+        alert("Connection to server lost.\nPlease contact technical support.");
+        logout();
       }
     }
   };
 
   const logout = async () => {
-    const apiResponse = await axios.post(
-      "http://localhost:8003/api/auth/signout"
-    );
+    try {
+      const apiResponse = await axios.post(
+        "http://localhost:8003/api/auth/signout"
+      );
+    } catch (error) {
+      console.error("Error signout:", error);
+    }
     localStorage.removeItem("tokens");
     setUser(null);
     setRefreshToken(null);

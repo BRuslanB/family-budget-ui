@@ -5,19 +5,19 @@ import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
 
 const Expenses = () => {
+  
   const { formError, setFormError } = useFormErrorContext();
   const { expense, expenseList, fetchExpense, fetchExpenseList, createExpense, updateExpense, deleteExpense } = useExpenseContext();
   const { categoryList, fetchCategoryList } = useCategoryContext();
   
-  const expenseId = useRef("");
-
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [newExpenseName, setNewExpenseName] = useState("");
   const [newExpenseDescription, setNewExpenseDescription] = useState("");
-  // const [newExpenseCategory, setNewExpenseCategory] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [deleteExpenseId, setDeleteExpenseId] = useState("");
+
+  const expenseId = useRef("");
 
   useEffect(() => {
     setFormError(""); // Clear previous form error on component mount
@@ -45,13 +45,13 @@ const Expenses = () => {
     setModalTitle(title);
   };
 
-  /*
-    добавить при нажатие кнопки Cancel очистку полей, во всех компонентах 
-      setNewExpenseName("");
-      setNewExpenseDescription("");
-      setSelectedCategoryId("");
-  */
-  
+  const handleModalHide = () => {
+    setNewExpenseName("");
+    setNewExpenseDescription("");
+    setSelectedCategoryId("");
+    handleToggleModal("", true);
+  };
+
   const handleAddExpense = async () => {
     setFormError(""); // Clear previous form error
 
@@ -65,10 +65,6 @@ const Expenses = () => {
       };
       await createExpense(payload);
 
-      setNewExpenseName("");
-      setNewExpenseDescription("");
-      // setNewExpenseCategory("");
-      setSelectedCategoryId("");
       handleToggleModal("");
       fetchExpenseList(); // Updating the list after successful addition
     }
@@ -78,7 +74,6 @@ const Expenses = () => {
     setFormError(""); // Clear previous form error
     setNewExpenseName(name);
     setNewExpenseDescription(description);
-    // setNewExpenseCategory(category);
     if (category) {
       setSelectedCategoryId(category.id);
     } else {
@@ -102,10 +97,6 @@ const Expenses = () => {
       };
       await updateExpense(payload);
 
-      setNewExpenseName("");
-      setNewExpenseDescription("");
-      // setNewExpenseCategory("");
-      setSelectedCategoryId("");
       expenseId.current = "";
       handleToggleModal("");
       fetchExpenseList(); // Updating the list after successful editing
@@ -159,7 +150,7 @@ const Expenses = () => {
           ))}
         </Row>
       </Container>
-      <Modal show={showModal} onHide={() => handleToggleModal("", true)}>
+      <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
@@ -258,7 +249,7 @@ const Expenses = () => {
         )}
         <Modal.Footer>
           {formError && <div className="text-danger col-12">{formError}</div>}
-          <Button variant="secondary" onClick={() => handleToggleModal("", true)}>
+          <Button variant="secondary" onClick={handleModalHide}>
             Cancel
           </Button>
           {modalTitle === "Add Expense" && (

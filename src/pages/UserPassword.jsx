@@ -6,18 +6,17 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 export const UserPassword = () => {
-  const { formError, setFormError } = useFormErrorContext();
   
-  useEffect(() => {
-    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
-  }, []);
-  console.log("UserPassword1.formError=", formError);
-
   const { updatePassword } = useUserContext();
+  const { formError, setFormError } = useFormErrorContext();
   const password = useRef("");
   const newPassword = useRef("");
   const rePassword = useRef("");
   
+  useEffect(() => {
+    setFormError(""); // Clearing a previous form error when mounting a component
+  }, []);
+
   const passwordSubmit = async () => {
     const payload = {
       password: password.current.value,
@@ -37,7 +36,6 @@ export const UserPassword = () => {
       password.current.value = "";
       newPassword.current.value = "";
       rePassword.current.value = "";
-      console.log("UserPassword2.formError=", formError);
     }
   };
 

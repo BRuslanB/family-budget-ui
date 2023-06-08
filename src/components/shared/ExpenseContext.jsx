@@ -7,11 +7,11 @@ const ExpenseContext = createContext();
 
 export const ExpenseContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  console.log("ExpenseContext1.formError=", formError);
+  // console.log("ExpenseContext1.formError=", formError);
 
   const [expenseList, setExpenseList] = useState([]);
   const [expense, setExpense] = useState(null);
-  const { user, refreshToken } = useContext(AuthContext);
+  const { user, refreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchExpenseList();
@@ -19,7 +19,7 @@ export const ExpenseContextProvider = ({ children }) => {
 
   const fetchExpenseList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/expenses'
@@ -32,14 +32,14 @@ export const ExpenseContextProvider = ({ children }) => {
       console.error('Error fetching expense:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ExpenseContext2.formError=", formError);
+        // console.log("ExpenseContext2.formError=", formError);
       }
     }
   };
 
   const fetchExpense = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/expenses/${id}`
@@ -52,14 +52,14 @@ export const ExpenseContextProvider = ({ children }) => {
       console.error('Error fetching expense:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ExpenseContext3.formError=", formError);
+        // console.log("ExpenseContext3.formError=", formError);
       }
     }
   };
 
   const createExpense = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/expenses",
@@ -72,14 +72,14 @@ export const ExpenseContextProvider = ({ children }) => {
       console.error("Error creating expense:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ExpenseContext4.formError=", formError);
+        // console.log("ExpenseContext4.formError=", formError);
       }
     }
   };
 
   const updateExpense = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/expenses",
@@ -92,14 +92,14 @@ export const ExpenseContextProvider = ({ children }) => {
       console.error("Error updating expense:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ExpenseContext5.formError=", formError);
+        // console.log("ExpenseContext5.formError=", formError);
       }
     }
   };
 
   const deleteExpense = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/expenses/${id}`
@@ -111,7 +111,7 @@ export const ExpenseContextProvider = ({ children }) => {
       console.error("Error deleting expense:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("ExpenseContext6.formError=", formError);
+        // console.log("ExpenseContext6.formError=", formError);
       }
     }
   };

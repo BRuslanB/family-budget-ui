@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const createJwtInterceptor = (userSub, refreshTokenUUID) => {
+const createJwtInterceptor = (userSub, refreshTokenUUID, logoutCallback) => {
   const jwtInterceptor = axios.create({});
 
   jwtInterceptor.interceptors.request.use((config) => {
@@ -26,39 +26,54 @@ const createJwtInterceptor = (userSub, refreshTokenUUID) => {
         const authData = JSON.parse(localStorage.getItem("tokens"));
 
         try {
-          let apiResponse = await axios.post(
-            "http://localhost:8003/api/auth/refreshtoken",
-            {
-              email: userSub,
-              tokenUUID: refreshTokenUUID
-            },
-            {
-              headers: {
-                "Refresh-Token": `Bearer ${authData.refresh_token}`,
-              },
-            }
-          );
+          await refreshAccessToken(userSub, refreshTokenUUID, authData.refresh_token);
 
-          localStorage.setItem("tokens", JSON.stringify(apiResponse.data));
-          error.config.headers["Authorization"] = `Bearer ${apiResponse.data.access_token}`;
-          // Выводим конфигурацию запроса с обновленным токеном
-          console.log("Request with refreshed token:", error.config); 
-           // Используем createJwtInterceptor для выполнения запроса с обновленным токеном
-           return createJwtInterceptor(userSub, refreshTokenUUID)(error.config);
+          // Update the token in the request with the refreshed token
+          error.config.headers["Authorization"] = `Bearer ${localStorage.getItem("access_token")}`;
+
+          console.log("Request with refreshed token:", error.config);
+
+          // Use createJwtInterceptor to make the request with the refreshed token
+          return createJwtInterceptor(userSub, refreshTokenUUID, logoutCallback)(error.config);
         } catch (error) {
-          console.error("Token refresh error:", error);
-          alert("Reauthorization error.\n Please log in again.");
-          return Promise.reject(error);
+          alert("Reauthorization error.\nPlease log in again.");
+          logoutCallback();
+          // return Promise.reject(error);
+          return null;
         }
-      } else {
+      } else if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
-        alert("Connection to server lost.\n Please contact technical support.");
-        return Promise.reject(error);
+        alert("Connection to server lost.\nPlease contact technical support.");
+        logoutCallback();
+        // return Promise.reject(error);
+        return null;
       }
     }
   );
 
   return jwtInterceptor;
 };
+
+// Function to refresh the token
+async function refreshAccessToken(userSub, refreshTokenUUID, refreshToken) {
+  try {
+    let apiResponse = await axios.post(
+      "http://localhost:8003/api/auth/refreshtoken",
+      {
+        email: userSub,
+        tokenUUID: refreshTokenUUID,
+      },
+      {
+        headers: {
+          "Refresh-Token": `Bearer ${refreshToken}`,
+        },
+      }
+    );
+
+    localStorage.setItem("tokens", JSON.stringify(apiResponse.data));
+  } catch (error) {
+    throw error;
+  }
+}
 
 export default createJwtInterceptor;

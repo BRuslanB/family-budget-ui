@@ -7,11 +7,11 @@ const IncomeContext = createContext();
 
 export const IncomeContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  console.log("IncomeContext1.formError=", formError);
+  // console.log("IncomeContext1.formError=", formError);
 
   const [incomeList, setIncomeList] = useState([]);
   const [income, setIncome] = useState(null);
-  const { user, refreshToken } = useContext(AuthContext);
+  const { user, refreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchIncomeList();
@@ -19,7 +19,7 @@ export const IncomeContextProvider = ({ children }) => {
 
   const fetchIncomeList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/incomes'
@@ -32,14 +32,14 @@ export const IncomeContextProvider = ({ children }) => {
       console.error('Error fetching income:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("IncomeContext2.formError=", formError);
+        // console.log("IncomeContext2.formError=", formError);
       }
     }
   };
 
   const fetchIncome = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/incomes/${id}`
@@ -52,14 +52,14 @@ export const IncomeContextProvider = ({ children }) => {
       console.error('Error fetching income:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("IncomeContext3.formError=", formError);
+        // console.log("IncomeContext3.formError=", formError);
       }
     }
   };
 
   const createIncome = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/incomes",
@@ -72,14 +72,14 @@ export const IncomeContextProvider = ({ children }) => {
       console.error("Error creating income:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("IncomeContext4.formError=", formError);
+        // console.log("IncomeContext4.formError=", formError);
       }
     }
   };
 
   const updateIncome = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/incomes",
@@ -92,14 +92,14 @@ export const IncomeContextProvider = ({ children }) => {
       console.error("Error updating income:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("IncomeContext5.formError=", formError);
+        // console.log("IncomeContext5.formError=", formError);
       }
     }
   };
 
   const deleteIncome = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/incomes/${id}`
@@ -111,7 +111,7 @@ export const IncomeContextProvider = ({ children }) => {
       console.error("Error deleting income:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("IncomeContext6.formError=", formError);
+        // console.log("IncomeContext6.formError=", formError);
       }
     }
   };

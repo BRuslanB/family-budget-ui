@@ -5,7 +5,7 @@ import createJwtInterceptor from "../components/shared/jwtInterceptor";
 import AuthContext from "../components/shared/AuthContext";
 
 const Payments = () => {
-  const { user, refreshToken } = useContext(AuthContext);
+  const { user, refreshToken, logout } = useContext(AuthContext);
   const [profile, setProfile] = useState([]);
 
   // console.log("userFullName:", user.fullname);
@@ -14,11 +14,11 @@ const Payments = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+        const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
         const axiosInstance = interceptor;
         const response = await axiosInstance.get("http://localhost:8003/api/users/getuser");
         setProfile(response.data);
-        console.log("profile=", profile)
+        console.log("profile=", profile);
       } catch (error) {
         console.error("Error fetching profile:", error);
         throw error; // Генерируем ошибку для передачи в jwtInterceptor

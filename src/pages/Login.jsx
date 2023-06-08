@@ -6,17 +6,17 @@ import Form from "react-bootstrap/Form";
 import AuthContext from "../components/shared/AuthContext";
 
 const Login = () => {
-  const { formError, setFormError } = useFormErrorContext();
   
-  useEffect(() => {
-    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
-  }, []);
-  console.log("Login1.formError=",formError);
+  const { formError, setFormError } = useFormErrorContext();
+  const {login}= useContext(AuthContext)
 
   const userEmail = useRef("");
   const password = useRef("");
-  const {login}= useContext(AuthContext)
  
+  useEffect(() => {
+    setFormError(""); // Clearing a previous form error when mounting a component
+  }, []);
+
   const loginSubmit = async () => {
     let payload = {
       email: userEmail.current.value,

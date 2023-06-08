@@ -7,13 +7,13 @@ const Incomes = () => {
   const { formError, setFormError } = useFormErrorContext();
   const { income, incomeList, fetchIncome, fetchIncomeList, createIncome, updateIncome, deleteIncome } = useIncomeContext();
 
-  const incomeId = useRef("");
-
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [newIncomeName, setNewIncomeName] = useState("");
   const [newIncomeDescription, setNewIncomeDescription] = useState("");
   const [deleteIncomeId, setDeleteIncomeId] = useState("");
+
+  const incomeId = useRef("");
 
   useEffect(() => {
     setFormError(""); // Clear previous form error on component mount
@@ -29,6 +29,12 @@ const Incomes = () => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
     setModalTitle(title);
   };
+
+  const handleModalHide = () => {
+    setNewIncomeName("");
+    setNewIncomeDescription("");
+    handleToggleModal("", true);
+  };
   
   const handleAddIncome = async () => {
     setFormError(""); // Clear previous form error
@@ -42,8 +48,6 @@ const Incomes = () => {
       };
       await createIncome(payload);
 
-      setNewIncomeName("");
-      setNewIncomeDescription("");
       handleToggleModal("");
       fetchIncomeList(); // Updating the list after successful addition
     }
@@ -70,8 +74,6 @@ const Incomes = () => {
       };
       await updateIncome(payload);
 
-      setNewIncomeName("");
-      setNewIncomeDescription("");
       incomeId.current = "";
       handleToggleModal("");
       fetchIncomeList(); // Updating the list after successful editing
@@ -124,7 +126,7 @@ const Incomes = () => {
           ))}
         </Row>
       </Container>
-      <Modal show={showModal} onHide={() => handleToggleModal("", true)}>
+      <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
@@ -183,7 +185,7 @@ const Incomes = () => {
         )}
         <Modal.Footer>
           {formError && <div className="text-danger col-12">{formError}</div>}
-          <Button variant="secondary" onClick={() => handleToggleModal("", true)}>
+          <Button variant="secondary" onClick={handleModalHide}>
             Cancel
           </Button>
           {modalTitle === "Add Income" && (

@@ -4,16 +4,17 @@ import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
 
 const Actors = () => {
+
   const { formError, setFormError } = useFormErrorContext();
   const { actor, actorList, fetchActor, fetchActorList, createActor, updateActor, deleteActor } = useActorContext();
-
-  const actorId = useRef("");
 
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [newActorName, setNewActorName] = useState("");
   const [newActorDescription, setNewActorDescription] = useState("");
   const [deleteActorId, setDeleteActorId] = useState("");
+
+  const actorId = useRef("");
 
   useEffect(() => {
     setFormError(""); // Clear previous form error on component mount
@@ -29,6 +30,12 @@ const Actors = () => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
     setModalTitle(title);
   };
+
+  const handleModalHide = () => {
+    setNewActorName("");
+    setNewActorDescription("");
+    handleToggleModal("", true);
+  };
   
   const handleAddActor = async () => {
     setFormError(""); // Clear previous form error
@@ -42,8 +49,6 @@ const Actors = () => {
       };
       await createActor(payload);
 
-      setNewActorName("");
-      setNewActorDescription("");
       handleToggleModal("");
       fetchActorList(); // Updating the list after successful addition
     }
@@ -70,8 +75,6 @@ const Actors = () => {
       };
       await updateActor(payload);
 
-      setNewActorName("");
-      setNewActorDescription("");
       actorId.current = "";
       handleToggleModal("");
       fetchActorList(); // Updating the list after successful editing
@@ -124,7 +127,7 @@ const Actors = () => {
           ))}
         </Row>
       </Container>
-      <Modal show={showModal} onHide={() => handleToggleModal("", true)}>
+      <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
@@ -183,7 +186,7 @@ const Actors = () => {
         )}
         <Modal.Footer>
           {formError && <div className="text-danger col-12">{formError}</div>}
-          <Button variant="secondary" onClick={() => handleToggleModal("", true)}>
+          <Button variant="secondary" onClick={handleModalHide}>
             Cancel
           </Button>
           {modalTitle === "Add Actor" && (

@@ -1,4 +1,4 @@
-import { useContext, useRef, useEffect } from "react";
+import { useContext, useRef, useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useUserContext } from "../components/shared/UserContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
@@ -7,19 +7,26 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 export const UserProfile = () => {
-  const { formError, setFormError } = useFormErrorContext();
-  
-  useEffect(() => {
-    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
-  }, []);
-  console.log("UserProfile1.formError=",formError);
-  
+ 
   const { userProfile, fetchUserProfile, updateProfile } = useUserContext();
   const { user, refreshToken } = useContext(AuthContext);
+  const { formError, setFormError } = useFormErrorContext();
+  const [selectedRoles, setSelectedRoles] = useState([]);
+
   const firstName = useRef("");
   const lastName = useRef("");
   const birthDay = useRef("");
 
+  useEffect(() => {
+    setFormError(""); // Clearing a previous form error when mounting a component
+  }, []);
+
+  useEffect(() => {
+    if (user && user.authorities) {
+      setSelectedRoles(user.authorities);
+    }
+  }, [user]);
+  
   useEffect(() => {
     if (user && refreshToken && !userProfile) {
       fetchUserProfile();
@@ -49,7 +56,6 @@ export const UserProfile = () => {
       setFormError("Please fill in all the required fields.");
     } else {
       await updateProfile(payload);
-      console.log("UserProfile2.formError=",formError)
     }
   };
 
@@ -80,6 +86,18 @@ export const UserProfile = () => {
               <Form.Group className="mb-2" controlId="formBirthDay">
                 <Form.Label>Birth Day</Form.Label>
                 <Form.Control type="date" ref={birthDay} required />
+              </Form.Group>
+              <Form.Group className="mb-2" controlId="formUserRoles">
+                <Form.Label>Roles</Form.Label>
+                {selectedRoles.map((role) => (
+                  <Form.Check
+                    key={role}
+                    type="checkbox"
+                    label={role}
+                    checked={true}
+                    disabled
+                  />
+                ))}
               </Form.Group>
               {formError && <div className="text-danger">{formError}</div>}
               <Button className="button_style" onClick={profileSubmit}>

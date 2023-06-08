@@ -7,6 +7,7 @@ import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
 
 const Checks = () => {
+
   const { formError, setFormError } = useFormErrorContext();
   const { check, checkList, fetchCheck, fetchCheckList, 
     createCheck, updateCheck, deleteCheck } = useCheckContext();
@@ -14,8 +15,6 @@ const Checks = () => {
   const { expenseList, fetchExpenseList } = useExpenseContext();
   const { actorList, fetchActorList } = useActorContext();
   
-  const checkId = useRef("");
-
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [newCheckVal, setNewCheckVal] = useState("");
@@ -25,6 +24,8 @@ const Checks = () => {
   const [selectedExpenseId, setSelectedExpenseId] = useState("");
   const [selectedActorId, setSelectedActorId] = useState("");
   const [deleteCheckId, setDeleteCheckId] = useState("");
+
+  const checkId = useRef("");
 
   useEffect(() => {
     setFormError(""); // Clear previous form error on component mount
@@ -47,16 +48,16 @@ const Checks = () => {
     setModalTitle(title);
   };
 
-  /*
-    добавить при нажатие кнопки Cancel очистку полей, во всех компонентах 
-      setNewCheckVal("");
-      setNewCheckDate("");
-      setNewCheckNote("");
-      setSelectedIncomeId("");
-      setSelectedExpenseId("");
-      setSelectedActorId("");
-  */
-  
+  const handleModalHide = () => {
+    setNewCheckVal("");
+    setNewCheckDate("");
+    setNewCheckNote("");
+    setSelectedIncomeId("");
+    setSelectedExpenseId("");
+    setSelectedActorId("");
+    handleToggleModal("", true);
+  };
+
   const handleAddCheck = async () => {
     setFormError(""); // Clear previous form error
 
@@ -74,12 +75,6 @@ const Checks = () => {
       };
       await createCheck(payload);
 
-      setNewCheckVal("");
-      setNewCheckDate("");
-      setNewCheckNote("");
-      setSelectedIncomeId("");
-      setSelectedExpenseId("");
-      setSelectedActorId("");
       handleToggleModal("");
       fetchCheckList(); // Updating the list after successful addition
     }
@@ -118,12 +113,6 @@ const Checks = () => {
       };
       await updateCheck(payload);
 
-      setNewCheckVal("");
-      setNewCheckDate("");
-      setNewCheckNote("");
-      setSelectedIncomeId("");
-      setSelectedExpenseId("");
-      setSelectedActorId("");
       checkId.current = "";
       handleToggleModal("");
       fetchCheckList(); // Updating the list after successful editing
@@ -180,7 +169,7 @@ const Checks = () => {
           ))}
         </Row>
       </Container>
-      <Modal show={showModal} onHide={() => handleToggleModal("", true)}>
+      <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
@@ -368,7 +357,7 @@ const Checks = () => {
         )}
         <Modal.Footer>
           {formError && <div className="text-danger col-12 me-auto">{formError}</div>}
-          <Button variant="secondary" onClick={() => handleToggleModal("", true)}>
+          <Button variant="secondary" onClick={handleModalHide}>
             Cancel
           </Button>
           {modalTitle === "Add Check" && (

@@ -10,21 +10,21 @@ const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  console.log("UserContext1.formError=", formError);
+  // console.log("UserContext1.formError=", formError);
 
   const [userProfile, setUserProfile] = useState(null);
-  const { user, refreshToken, setUser, setRefreshToken } = useContext(AuthContext);
+  const { user, refreshToken, setUser, setRefreshToken, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => { 
-    if (user && refreshToken) { //обновлять при изменение user или refreshToken
+    if (user && refreshToken) { // Update on user or refresh Token change
       fetchUserProfile();
     }
   }, [user, refreshToken]);
 
   const fetchUserProfile = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8003/api/users/getuser'
@@ -35,14 +35,14 @@ export const UserContextProvider = ({ children }) => {
       console.error('Error fetching user profile:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("UserContext2.formError=", formError);
+        // console.log("UserContext2.formError=", formError);
       }
     }
   };
 
   const updateProfile = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         'http://localhost:8003/api/users/profile',
@@ -51,7 +51,7 @@ export const UserContextProvider = ({ children }) => {
       console.log('Profile saved:', response.data);
       alert(response.data.message); // Display the response message
 
-      // Отправка запроса на обновление токенов
+      // Sending a request to refresh tokens
       const refreshResponse = await axios.post(
         "http://localhost:8003/api/auth/refreshtoken",
         {
@@ -66,7 +66,7 @@ export const UserContextProvider = ({ children }) => {
       );
       console.log("refreshResponse:", refreshResponse.data);
 
-      // Обновление токенов в localStorage и в приложении
+      // Refreshing tokens in localStorage and in the application
       localStorage.setItem("tokens", JSON.stringify(refreshResponse.data));
       setUser(jwt_decode(refreshResponse.data.access_token));
       setRefreshToken(jwt_decode(refreshResponse.data.refresh_token));
@@ -76,14 +76,14 @@ export const UserContextProvider = ({ children }) => {
       console.error("Error saving profile:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("UserContext3.formError=", formError);
+        // console.log("UserContext3.formError=", formError);
       } 
     }
   };
 
   const updatePassword = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8003/api/users/password",
@@ -97,7 +97,7 @@ export const UserContextProvider = ({ children }) => {
       console.error("Error updating password:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        console.log("UserContext4.formError=", formError);
+        // console.log("UserContext4.formError=", formError);
       }
     }
   };

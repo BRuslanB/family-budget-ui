@@ -13,7 +13,7 @@ export const PaymentContextProvider = ({ children }) => {
   useEffect(() => {
     setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
   }, []);
-  console.log("PaymentContext1.formError=",formError);
+  // console.log("PaymentContext1.formError=", formError);
 
   const [payments, setPayments] = useState([]);
 

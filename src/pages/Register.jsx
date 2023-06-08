@@ -6,12 +6,9 @@ import Form from "react-bootstrap/Form";
 import AuthContext from "../components/shared/AuthContext";
 
 const Register = () => {
-  const { formError, setFormError } = useFormErrorContext();
   
-  useEffect(() => {
-    setFormError(""); // Очистка предыдущей ошибки формы при монтировании компонента
-  }, []);
-  console.log("Register1.formError=",formError);
+  const { formError, setFormError } = useFormErrorContext();
+  const {register}= useContext(AuthContext)
 
   const userEmail = useRef("");
   const firstName = useRef("");
@@ -19,8 +16,11 @@ const Register = () => {
   const birthDay = useRef("");
   const password = useRef("");
   const rePassword = useRef("");
-  const {register}= useContext(AuthContext)
  
+  useEffect(() => {
+    setFormError(""); // Clearing a previous form error when mounting a component
+  }, []);
+
   const registerSubmit = async () => {
     let payload = {
       email: userEmail.current.value,
@@ -49,7 +49,6 @@ const Register = () => {
       birthDay.current.value = "";
       password.current.value = "";
       rePassword.current.value = "";
-      console.log("Register2.formError=", formError);
     }
   };
   

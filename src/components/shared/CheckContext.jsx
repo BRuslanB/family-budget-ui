@@ -29,7 +29,7 @@ export const CheckContextProvider = ({ children }) => {
       console.log("checkList", checkList);
 
     } catch (error) {
-      console.error('Error fetching check:', error);
+      console.error('Error fetching Check:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
         // console.log("CheckContext2.formError=", formError);
@@ -49,7 +49,7 @@ export const CheckContextProvider = ({ children }) => {
       console.log("check", check);
   
     } catch (error) {
-      console.error('Error fetching check:', error);
+      console.error('Error fetching Check:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
         // console.log("CheckContext3.formError=", formError);
@@ -69,10 +69,10 @@ export const CheckContextProvider = ({ children }) => {
       // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
-      console.error("Error creating check:", error);
+      console.error("Error creating Check:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("CheckContext4.formError=", formError);
+        console.log("CheckContext4.formError=", formError);
       }
     }
   };
@@ -89,10 +89,30 @@ export const CheckContextProvider = ({ children }) => {
       // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
-      console.error("Error updating check:", error);
+      console.error("Error updating Check:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("CheckContext5.formError=", formError);
+        console.log("CheckContext5.formError=", formError);
+      }
+    }
+  };
+
+  const updateCheckObject = async (payload) => {
+    try {
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const axiosInstance = interceptor;
+      const response = await axiosInstance.put(
+        "http://localhost:8001/api/checks/object",
+        payload
+      );
+      console.log("Check Object updated:", response.data);
+      // alert(response.data.message); // Display the response messagee
+
+    } catch (error) {
+      console.error("Error updating Check Object:", error);
+      if (error.response && error.response.status === 400) {
+        setFormError(error.response.data.message);
+        console.log("CheckContext5.formError=", formError);
       }
     }
   };
@@ -108,17 +128,17 @@ export const CheckContextProvider = ({ children }) => {
       // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
-      console.error("Error deleting check:", error);
+      console.error("Error deleting Check:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("CheckContext6.formError=", formError);
+        console.log("CheckContext6.formError=", formError);
       }
     }
   };
 
   return (
     <CheckContext.Provider value={{ check, checkList, formError, setFormError, 
-      fetchCheck, fetchCheckList, createCheck, updateCheck, deleteCheck }}>
+      fetchCheck, fetchCheckList, createCheck, updateCheck, updateCheckObject, deleteCheck }}>
       {children}
     </CheckContext.Provider>
   );

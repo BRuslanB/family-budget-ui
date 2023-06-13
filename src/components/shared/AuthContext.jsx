@@ -50,7 +50,7 @@ export const AuthContextProvider = ({ children }) => {
       console.error("Error signin:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("AuthContext2.formError=", formError);
+        console.log("AuthContext2.formError=", formError);
       } else if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
         alert("Connection to server lost.\nPlease contact technical support.");
@@ -72,7 +72,7 @@ export const AuthContextProvider = ({ children }) => {
       console.error("Error signin:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("AuthContext3.formError=", formError);
+        console.log("AuthContext3.formError=", formError);
       } else if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
         alert("Connection to server lost.\nPlease contact technical support.");

@@ -76,7 +76,7 @@ export const UserContextProvider = ({ children }) => {
       console.error("Error saving profile:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("UserContext3.formError=", formError);
+        console.log("UserContext3.formError=", formError);
       } 
     }
   };
@@ -97,7 +97,7 @@ export const UserContextProvider = ({ children }) => {
       console.error("Error updating password:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("UserContext4.formError=", formError);
+        console.log("UserContext4.formError=", formError);
       }
     }
   };

@@ -72,7 +72,7 @@ export const ExpenseContextProvider = ({ children }) => {
       console.error("Error creating expense:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("ExpenseContext4.formError=", formError);
+        console.log("ExpenseContext4.formError=", formError);
       }
     }
   };
@@ -92,7 +92,7 @@ export const ExpenseContextProvider = ({ children }) => {
       console.error("Error updating expense:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("ExpenseContext5.formError=", formError);
+        console.log("ExpenseContext5.formError=", formError);
       }
     }
   };
@@ -111,7 +111,7 @@ export const ExpenseContextProvider = ({ children }) => {
       console.error("Error deleting expense:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("ExpenseContext6.formError=", formError);
+        console.log("ExpenseContext6.formError=", formError);
       }
     }
   };

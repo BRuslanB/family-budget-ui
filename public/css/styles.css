@@ -60,6 +60,10 @@
     background-color: RGB(133, 95, 82);
 }
 
+.align-right {
+    text-align: right;
+}
+
 .dropdown-menu {
     background-color: RGB(174, 138, 126);
 }

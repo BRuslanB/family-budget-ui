@@ -72,7 +72,7 @@ export const CategoryContextProvider = ({ children }) => {
       console.error("Error creating category:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("CategoryContext4.formError=", formError);
+        console.log("CategoryContext4.formError=", formError);
       }
     }
   };
@@ -92,7 +92,7 @@ export const CategoryContextProvider = ({ children }) => {
       console.error("Error updating category:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("CategoryContext5.formError=", formError);
+        console.log("CategoryContext5.formError=", formError);
       }
     }
   };
@@ -111,7 +111,7 @@ export const CategoryContextProvider = ({ children }) => {
       console.error("Error deleting category:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("CategoryContext6.formError=", formError);
+        console.log("CategoryContext6.formError=", formError);
       }
     }
   };

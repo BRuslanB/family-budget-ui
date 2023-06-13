@@ -8,6 +8,7 @@ import { ExpenseContextProvider } from "./components/shared/ExpenseContext";
 import { IncomeContextProvider } from "./components/shared/IncomeContext"; 
 import { ActorContextProvider } from "./components/shared/ActorContext"; 
 import { CheckContextProvider } from "./components/shared/CheckContext"; 
+import { ReceiptContextProvider } from "./components/shared/ReceiptContext"; 
 import Layout from "./components/shared/Layout";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 import Home from "./pages/Home";
@@ -36,9 +37,11 @@ function App() {
                       <IncomeContextProvider>
                         <ExpenseContextProvider>
                           <ActorContextProvider>
-                            <CheckContextProvider>
-                              <Checks />
-                            </CheckContextProvider>
+                            <ReceiptContextProvider>
+                              <CheckContextProvider>
+                                <Checks />
+                              </CheckContextProvider>
+                            </ReceiptContextProvider>
                           </ActorContextProvider>
                         </ExpenseContextProvider>
                       </IncomeContextProvider>

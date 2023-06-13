@@ -82,6 +82,8 @@ const Categories = () => {
   };
 
   const handleDeleteCategory = async () => {
+    setFormError(""); // Clear previous form error
+
     await deleteCategory(deleteCategoryId);
 
     setDeleteCategoryId("");
@@ -185,7 +187,7 @@ const Categories = () => {
           <Modal.Body>Are you sure you want to delete this Category?</Modal.Body>
         )}
         <Modal.Footer>
-          {formError && <div className="text-danger col-12">{formError}</div>}
+          {formError && <div className="text-danger text-end col-12">{formError}</div>}
           <Button variant="secondary" onClick={handleModalHide}>
             Cancel
           </Button>

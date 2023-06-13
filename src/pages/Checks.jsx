@@ -3,6 +3,7 @@ import { useCheckContext } from "../components/shared/CheckContext";
 import { useIncomeContext } from "../components/shared/IncomeContext";
 import { useExpenseContext } from "../components/shared/ExpenseContext";
 import { useActorContext } from "../components/shared/ActorContext";
+import { useReceiptContext } from "../components/shared/ReceiptContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
 
@@ -10,21 +11,26 @@ const Checks = () => {
 
   const { formError, setFormError } = useFormErrorContext();
   const { check, checkList, fetchCheck, fetchCheckList, 
-    createCheck, updateCheck, deleteCheck } = useCheckContext();
+    createCheck, updateCheck, updateCheckObject, deleteCheck } = useCheckContext();
   const { incomeList, fetchIncomeList } = useIncomeContext();
   const { expenseList, fetchExpenseList } = useExpenseContext();
   const { actorList, fetchActorList } = useActorContext();
+  const { receipt, fetchReceipt, receiptId, setReceiptId,
+    createReceipt, updateReceipt, deleteReceipt } = useReceiptContext();
   
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  const [newCheckVal, setNewCheckVal] = useState("");
+  const [newCheckVal, setNewCheckVal] = useState(null);
   const [newCheckDate, setNewCheckDate] = useState("");
   const [newCheckNote, setNewCheckNote] = useState("");
-  const [selectedIncomeId, setSelectedIncomeId] = useState("");
-  const [selectedExpenseId, setSelectedExpenseId] = useState("");
-  const [selectedActorId, setSelectedActorId] = useState("");
-  const [deleteCheckId, setDeleteCheckId] = useState("");
-
+  const [selectedIncomeId, setSelectedIncomeId] = useState(null);
+  const [selectedExpenseId, setSelectedExpenseId] = useState(null);
+  const [selectedActorId, setSelectedActorId] = useState(null);
+  const [deleteCheckId, setDeleteCheckId] = useState(null);
+  const [receiptFileType, setReceiptFileType] = useState("");
+  const [receiptFileContent, setReceiptFileContent] = useState([]);
+  const [deleteReceiptId, setDeleteReceiptId] = useState(null);
+  
   const checkId = useRef("");
 
   useEffect(() => {
@@ -42,33 +48,53 @@ const Checks = () => {
       fetchCheckList();
     }
   }, [checkList, fetchCheckList]);
+
+  useEffect(() => {
+    console.log("RECEIPT ID=", receiptId);
+    console.log("useEffect.deleteReceiptId=", deleteReceiptId);
   
+    const updateCheckAndFetchList = async () => {
+      if (
+        (receiptId !== null && receiptId !== "") ||
+        (receiptId !== deleteReceiptId &&
+          deleteReceiptId !== null &&
+          deleteReceiptId !== "")
+      ) {
+        await handleUpdateCheckObject();
+        await fetchCheckList();
+      }
+    };
+  
+    updateCheckAndFetchList(); // Calling an async function immediately
+  }, [receiptId]);
+
   const handleToggleModal = (title, forceClose = false) => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
     setModalTitle(title);
   };
 
   const handleModalHide = () => {
-    setNewCheckVal("");
+    setNewCheckVal(null);
     setNewCheckDate("");
     setNewCheckNote("");
-    setSelectedIncomeId("");
-    setSelectedExpenseId("");
-    setSelectedActorId("");
+    setSelectedIncomeId(null);
+    setSelectedExpenseId(null);
+    setSelectedActorId(null);
     handleToggleModal("", true);
   };
 
   const handleAddCheck = async () => {
     setFormError(""); // Clear previous form error
 
-    if (newCheckVal === "" || newCheckDate.trim() === "" || selectedActorId === "" || 
-      (selectedIncomeId === "" & selectedExpenseId === "")) {
+    if (newCheckVal === null || newCheckDate.trim() === "" || selectedActorId === null || 
+      (selectedIncomeId === null & selectedExpenseId === null)) {
       setFormError("Please fill in all the required fields.");
     } else {
       const payload = {
         val: newCheckVal,
         date: newCheckDate,
         note: newCheckNote,
+        object: null,
         income: selectedIncomeId ? { id: selectedIncomeId } : null,
         expense: selectedExpenseId ? { id: selectedExpenseId } : null,
         actor: selectedActorId ? { id: selectedActorId } : null
@@ -76,11 +102,11 @@ const Checks = () => {
       await createCheck(payload);
 
       handleToggleModal("");
-      fetchCheckList(); // Updating the list after successful addition
+      fetchCheckList(); // Updating the list after successful addition Check
     }
   };
 
-  const handleEditCheck = (id, val, date, note, income, expense, actor, object) => {
+  const handleEditCheck = (id, val, date, note, income, expense, actor) => {
     setFormError(""); // Clear previous form error
     setNewCheckVal(val);
     setNewCheckDate(date);
@@ -94,12 +120,9 @@ const Checks = () => {
 
   const handleUpdateCheck = async () => {
     setFormError(""); // Clear previous form error
-        income: selectedIncomeId ? { id: selectedIncomeId } : null,
-    console.log("selectedIncomeId=", selectedIncomeId);
-    console.log("selectedExpenseId=", selectedExpenseId);
-    console.log("selectedActorId=", selectedActorId);
-    if (newCheckVal === "" || newCheckDate.trim() === "" || selectedActorId === "" || 
-      (selectedIncomeId === "" & selectedExpenseId === "")) {
+  
+    if (newCheckVal === null || newCheckDate.trim() === "" || selectedActorId === null || 
+      (selectedIncomeId === null & selectedExpenseId === null)) {
       setFormError("Please fill in all the required fields.");
     } else {
       const payload = {
@@ -115,18 +138,90 @@ const Checks = () => {
 
       checkId.current = "";
       handleToggleModal("");
-      fetchCheckList(); // Updating the list after successful editing
+      fetchCheckList(); // Updating the list after successful editing Check
     }
   };
 
   const handleDeleteCheck = async () => {
+    setFormError(""); // Clear previous form error
+
     await deleteCheck(deleteCheckId);
 
     setDeleteCheckId("");
     handleToggleModal("");
-    fetchCheckList(); // Updating the list after successful deletion
+    fetchCheckList(); // Updating the list after successful deletion Check
   };
 
+  const handleAddReceipt = async () => {
+    setFormError(""); // Clear previous form error
+
+    if (!receiptFileType || receiptFileContent.length === 0) {
+      setFormError("Select a receipt file.");
+    } else {
+      const payload = {
+        fileType: receiptFileType,
+        // fileContent: receiptFileContent
+        fileContent: new String(receiptFileContent) // Convert to string
+      };
+      await createReceipt(payload); // получаем receiptId
+
+      handleToggleModal("");
+    }
+  };
+
+  const handleEditReceipt = (id, object) => {
+    setFormError(""); // Clear previous form error
+
+    checkId.current = id;
+    setReceiptId(object); // сохраняем текущее значение в receiptId 
+    handleToggleModal("Edit Receipt");
+  };
+
+  const handleUpdateReceipt = async () => {
+    setFormError(""); // Clear previous form error
+
+    if (!receiptFileType || receiptFileContent.length === 0) {
+      setFormError("Select a receipt file.");
+    } else {
+      const payload = {
+        id: receiptId,
+        fileType: receiptFileType,
+        // fileContent: receiptFileContent
+        fileContent: new String(receiptFileContent) // Convert to string
+      };
+      await updateReceipt(payload);
+
+      handleToggleModal("");
+    }
+  };
+
+  const handleUpdateCheckObject = async () => {
+      const payload = {
+      id: checkId.current,
+      object: receiptId  ? receiptId : null,
+    };
+    await updateCheckObject(payload);
+  };
+
+  const handleDeleteReceipt = async () => {
+    await deleteReceipt(receiptId);
+
+    setReceiptId(""); // очищаем текущее значание в receiptId 
+    handleToggleModal("");
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setReceiptFileContent(Array.from(new Uint8Array(e.target.result)));
+      };
+      reader.readAsArrayBuffer(file);
+      setReceiptFileType(file.type);
+    }
+  };
+  
   return (
     <>
       <Container className="mt-2">
@@ -148,7 +243,7 @@ const Checks = () => {
                       className="button_style"
                       style={{ backgroundColor: "forestgreen" }}
                       onClick={() => handleEditCheck(item.id, item.val, item.date, item.note, 
-                        item.income, item.expense, item.actor, item.object)}
+                        item.income, item.expense, item.actor)}
                     >
                       Edit
                     </Button>
@@ -157,10 +252,17 @@ const Checks = () => {
                       style={{ backgroundColor: "firebrick" }}
                       onClick={() => {
                         setDeleteCheckId(item.id);
-                        handleToggleModal("Confirm Delete");
+                        handleToggleModal("Delete Check");
                       }}
                     >
                       Delete
+                    </Button>
+                    <Button
+                      className="button_style ms-2" // align-right
+                      style={{ backgroundColor: "MediumBlue" }}
+                      onClick={() => handleEditReceipt(item.id, item.object)}
+                    >
+                      Receipt
                     </Button>
                   </Card.Footer>
                 </Card.Body>
@@ -240,7 +342,7 @@ const Checks = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newCheckNote}
+                    value={newCheckNote ? " " : newCheckNote}
                     onChange={(e) => setNewCheckNote(e.target.value)}
                   />
                 </Form.Group>
@@ -291,7 +393,7 @@ const Checks = () => {
                       }
                     })}
                   </Form.Select>
-                </Form.Group>                
+                </Form.Group>
                 <Form.Group controlId="formCheckExpense">
                   <Form.Label>Expense</Form.Label>
                   <Form.Select
@@ -315,7 +417,7 @@ const Checks = () => {
                       }
                     })}
                   </Form.Select>
-                </Form.Group>                
+                </Form.Group>
                 <Form.Group controlId="formCheckActor">
                   <Form.Label>Actor</Form.Label>
                   <Form.Select
@@ -344,7 +446,7 @@ const Checks = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newCheckNote}
+                    value={newCheckNote ? " " : newCheckNote}
                     onChange={(e) => setNewCheckNote(e.target.value)}
                   />
                 </Form.Group>
@@ -352,11 +454,29 @@ const Checks = () => {
             ]}
           </Modal.Body>
         )}
-        {modalTitle === "Confirm Delete" && (
+        {modalTitle === "Delete Check" && (
           <Modal.Body>Are you sure you want to delete this Check?</Modal.Body>
         )}
+        {modalTitle === "Edit Receipt" && (
+          <Modal.Body>
+            {[ // Content wrapped in an array
+              <Form key="edit-receipt-form">
+                <Form.Group controlId="formCheckObject">
+                  <Form.Label>Object {receiptId}</Form.Label>
+                </Form.Group>
+                <Form.Group controlId="formCheckObject">
+                  <Form.Label>File Receipt</Form.Label>
+                  <Form.Control
+                    type="file"
+                    onChange={handleFileChange}
+                  />
+                </Form.Group>
+              </Form>
+            ]}
+          </Modal.Body>
+        )}
         <Modal.Footer>
-          {formError && <div className="text-danger col-12 me-auto">{formError}</div>}
+          {formError && <div className="text-danger text-end col-12">{formError}</div>}
           <Button variant="secondary" onClick={handleModalHide}>
             Cancel
           </Button>
@@ -370,11 +490,27 @@ const Checks = () => {
               Update
             </Button>
           )}
-          {modalTitle === "Confirm Delete" && (
+          {modalTitle === "Delete Check" && (
             <Button variant="danger" onClick={handleDeleteCheck}>
               Delete
             </Button>
           )}
+          {modalTitle === "Edit Receipt" && (
+            <div>
+              <Button variant="danger" disabled={receiptId === null || receiptId === ""}
+                  onClick={() => {
+                    setDeleteReceiptId(receiptId);
+                    console.log("Delete.onClick.setDeleteReceiptId=", deleteReceiptId);
+                    handleDeleteReceipt();
+                  }}>
+                Delete
+              </Button>
+              <Button className="ms-2" variant="primary" onClick={receiptId === null || receiptId === "" ?
+                  handleAddReceipt : handleUpdateReceipt}>
+                Upload
+              </Button>
+            </div>
+        )}
         </Modal.Footer>
       </Modal>
     </>

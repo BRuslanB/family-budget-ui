@@ -72,7 +72,7 @@ export const IncomeContextProvider = ({ children }) => {
       console.error("Error creating income:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("IncomeContext4.formError=", formError);
+        console.log("IncomeContext4.formError=", formError);
       }
     }
   };
@@ -92,7 +92,7 @@ export const IncomeContextProvider = ({ children }) => {
       console.error("Error updating income:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("IncomeContext5.formError=", formError);
+        console.log("IncomeContext5.formError=", formError);
       }
     }
   };
@@ -111,7 +111,7 @@ export const IncomeContextProvider = ({ children }) => {
       console.error("Error deleting income:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("IncomeContext6.formError=", formError);
+        console.log("IncomeContext6.formError=", formError);
       }
     }
   };

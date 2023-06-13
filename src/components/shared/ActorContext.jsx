@@ -72,7 +72,7 @@ export const ActorContextProvider = ({ children }) => {
       console.error("Error creating actor:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("ActorContext4.formError=", formError);
+        console.log("ActorContext4.formError=", formError);
       }
     }
   };
@@ -92,7 +92,7 @@ export const ActorContextProvider = ({ children }) => {
       console.error("Error updating actor:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("ActorContext5.formError=", formError);
+        console.log("ActorContext5.formError=", formError);
       }
     }
   };
@@ -111,7 +111,7 @@ export const ActorContextProvider = ({ children }) => {
       console.error("Error deleting actor:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
-        // console.log("ActorContext6.formError=", formError);
+        console.log("ActorContext6.formError=", formError);
       }
     }
   };

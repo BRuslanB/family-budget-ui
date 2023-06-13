@@ -41,6 +41,10 @@ const createJwtInterceptor = (userSub, refreshTokenUUID, logoutCallback) => {
           // return Promise.reject(error);
           return null;
         }
+      // } else if (error.response && error.response.status === 400) {
+      //     setFormError(error.response.data.message);
+      //     console.log("jwtInterceptor.formError=", formError);
+      //     return null;
       } else if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
         alert("Connection to server lost.\nPlease contact technical support.");

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useFormErrorContext } from './FormErrorContext';
+import { useRefreshContext } from './RefreshContext';
 import AuthContext from "./AuthContext";
 import createJwtInterceptor from "./jwtInterceptor";
 
@@ -8,24 +9,36 @@ const CheckContext = createContext();
 export const CheckContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
   // console.log("CheckContext1.formError=", formError);
+  const refreshContext = useRefreshContext();
 
   const [checkList, setCheckList] = useState([]);
   const [check, setCheck] = useState(null);
-  const { user, refreshToken, logout } = useContext(AuthContext);
+  const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchCheckList();
   }, [user, refreshToken]);
 
+  useEffect(() => {
+    console.log("CheckContext -> Количество запросов в очереди:", 
+      refreshContext.requestQueue.length, refreshContext.requestQueue);
+  }, [refreshContext.requestQueue]);
+
   const fetchCheckList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/checks'
       );
-      console.log("CheckList fetching:", response.data);
-      setCheckList(response.data);
+
+      if (response.data !== undefined) {
+        console.log("CheckList fetching:", response.data);
+        setCheckList(response.data);
+      } else {
+        console.log("CheckList fetching:", null);
+        setCheckList([]);
+      }
       console.log("checkList", checkList);
 
     } catch (error) {
@@ -39,13 +52,19 @@ export const CheckContextProvider = ({ children }) => {
 
   const fetchCheck = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/checks/${id}`
       );
-      console.log("Check fetching:", response.data);
-      setCheck(response.data);
+
+      if (response.data !== undefined) {
+        console.log("Check fetching:", response.data);
+        setCheck(response.data);
+      } else {
+        console.log("Check fetching:", null);
+        setCheck(null);
+      }
       console.log("check", check);
   
     } catch (error) {
@@ -59,7 +78,7 @@ export const CheckContextProvider = ({ children }) => {
 
   const createCheck = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/checks",
@@ -79,7 +98,7 @@ export const CheckContextProvider = ({ children }) => {
 
   const updateCheck = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/checks",
@@ -99,7 +118,7 @@ export const CheckContextProvider = ({ children }) => {
 
   const updateCheckObject = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/checks/object",
@@ -119,7 +138,7 @@ export const CheckContextProvider = ({ children }) => {
 
   const deleteCheck = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/checks/${id}`

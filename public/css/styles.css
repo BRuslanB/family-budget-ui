@@ -81,3 +81,10 @@
     color: white;
     background-color: RGB(133, 95, 82);
 }
+
+.preview-image {
+    width: 100%;
+    height: auto;
+    border: none;
+    margin-bottom: 20px;
+}

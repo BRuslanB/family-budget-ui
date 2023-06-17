@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useExpenseContext } from "../components/shared/ExpenseContext";
 import { useCategoryContext } from "../components/shared/CategoryContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
@@ -7,9 +8,12 @@ import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap"
 const Expenses = () => {
   
   const { formError, setFormError } = useFormErrorContext();
-  const { expense, expenseList, fetchExpense, fetchExpenseList, createExpense, updateExpense, deleteExpense } = useExpenseContext();
+  const { expense, expenseList, fetchExpense, fetchExpenseList, 
+    createExpense, updateExpense, deleteExpense } = useExpenseContext();
   const { categoryList, fetchCategoryList } = useCategoryContext();
-  
+  // const { isRefreshingToken, requestQueue, 
+  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
+
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [newExpenseName, setNewExpenseName] = useState("");
@@ -23,21 +27,14 @@ const Expenses = () => {
     setFormError(""); // Clear previous form error on component mount
   }, []);
 
-  // useEffect(() => {
-  //   if (!expenseList) {
-  //     fetchExpenseList();
-  //   }
-  //   fetchCategoryList(); // Получить список категорий
-  // }, [expenseList, fetchExpenseList, fetchCategoryList]);
-
-  useEffect(() => {
-    fetchCategoryList();
-  }, []);
-
   useEffect(() => {
     if (!expenseList) {
       fetchExpenseList();
+      fetchCategoryList();
     }
+    // if (isRefreshingToken && requestQueue.length > 0) {
+    //   processRequestQueue();
+    // }
   }, [expenseList, fetchExpenseList]);
   
   const handleToggleModal = (title, forceClose = false) => {

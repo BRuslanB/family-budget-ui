@@ -1,14 +1,19 @@
+import { useContext, useEffect } from "react";
 import { Navbar, Nav, NavDropdown, Dropdown } from 'react-bootstrap';
 import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
 import AuthContext from "./AuthContext";
 
+
 const Layout = ({ children }) => {
+
   const { user, refreshToken, logout } = useContext(AuthContext);
-  console.log("user", user)
-  console.log("refreshToken", refreshToken)
-  
+
+  useEffect(() => { 
+    console.log("Layout.user", user)
+    console.log("Layout.refreshToken", refreshToken)
+  }, [user, refreshToken]);
+
   return (
     <>
       <Navbar className="bg_color_style" variant="dark">

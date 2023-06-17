@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useFormErrorContext } from './FormErrorContext';
+import { useRefreshContext } from './RefreshContext';
 import AuthContext from "./AuthContext";
 import createJwtInterceptor from "./jwtInterceptor";
 
@@ -8,24 +9,36 @@ const IncomeContext = createContext();
 export const IncomeContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
   // console.log("IncomeContext1.formError=", formError);
+  const refreshContext = useRefreshContext();
 
   const [incomeList, setIncomeList] = useState([]);
   const [income, setIncome] = useState(null);
-  const { user, refreshToken, logout } = useContext(AuthContext);
+  const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchIncomeList();
   }, [user, refreshToken]);
 
+  useEffect(() => {
+    console.log("IncomeContext -> Количество запросов в очереди:", 
+      refreshContext.requestQueue.length, refreshContext.requestQueue);
+  }, [refreshContext.requestQueue]);
+
   const fetchIncomeList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/incomes'
       );
-      console.log("IncomeList fetching:", response.data);
-      setIncomeList(response.data);
+
+      if (response.data !== undefined) {
+        console.log("IncomeList fetching:", response.data);
+        setIncomeList(response.data);
+      } else {
+        console.log("IncomeList fetching:", null);
+        setIncomeList([]);
+      }
       console.log("incomeList", incomeList);
 
     } catch (error) {
@@ -39,13 +52,19 @@ export const IncomeContextProvider = ({ children }) => {
 
   const fetchIncome = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/incomes/${id}`
       );
-      console.log("Income fetching:", response.data);
-      setIncome(response.data);
+  
+      if (response.data !== undefined) {
+        console.log("Income fetching:", response.data);
+        setIncome(response.data);
+      } else {
+        console.log("Income fetching:", null);
+        setIncome(null);
+      }
       console.log("income", income);
   
     } catch (error) {
@@ -59,7 +78,7 @@ export const IncomeContextProvider = ({ children }) => {
 
   const createIncome = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/incomes",
@@ -79,7 +98,7 @@ export const IncomeContextProvider = ({ children }) => {
 
   const updateIncome = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/incomes",
@@ -99,7 +118,7 @@ export const IncomeContextProvider = ({ children }) => {
 
   const deleteIncome = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/incomes/${id}`

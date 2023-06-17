@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { FormErrorContextProvider } from "./components/shared/FormErrorContext"; 
 import { AuthContextProvider } from "./components/shared/AuthContext";
 import { UserContextProvider } from "./components/shared/UserContext"; 
+import { RefreshContextProvider } from "./components/shared/RefreshContext"; 
 import { CategoryContextProvider } from "./components/shared/CategoryContext"; 
 import { ExpenseContextProvider } from "./components/shared/ExpenseContext"; 
 import { IncomeContextProvider } from "./components/shared/IncomeContext"; 
@@ -27,6 +28,7 @@ function App() {
     <>
       <FormErrorContextProvider>
         <AuthContextProvider>
+          <RefreshContextProvider>
             <Layout>
               <Routes>
                 <Route path="/" element={<Home />}></Route>
@@ -128,6 +130,7 @@ function App() {
                 ></Route>
               </Routes>
             </Layout>
+          </RefreshContextProvider>
         </AuthContextProvider>
       </FormErrorContextProvider>
     </>

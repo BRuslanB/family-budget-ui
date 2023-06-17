@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useFormErrorContext } from './FormErrorContext';
+import { useRefreshContext } from './RefreshContext';
 import AuthContext from "./AuthContext";
 import createJwtInterceptor from "./jwtInterceptor";
 
@@ -8,24 +9,36 @@ const ExpenseContext = createContext();
 export const ExpenseContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
   // console.log("ExpenseContext1.formError=", formError);
+  const refreshContext = useRefreshContext();
 
   const [expenseList, setExpenseList] = useState([]);
   const [expense, setExpense] = useState(null);
-  const { user, refreshToken, logout } = useContext(AuthContext);
+  const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchExpenseList();
   }, [user, refreshToken]);
 
+  useEffect(() => {
+    console.log("ExpenseContext -> Количество запросов в очереди:", 
+      refreshContext.requestQueue.length, refreshContext.requestQueue);
+  }, [refreshContext.requestQueue]);
+
   const fetchExpenseList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/expenses'
       );
-      console.log("ExpenseList fetching:", response.data);
-      setExpenseList(response.data);
+
+      if (response.data !== undefined) {
+        console.log("ExpenseList fetching:", response.data);
+        setExpenseList(response.data);
+      } else {
+        console.log("ExpenseList fetching:", null);
+        setExpenseList([]);
+      }
       console.log("expenseList", expenseList);
 
     } catch (error) {
@@ -39,14 +52,20 @@ export const ExpenseContextProvider = ({ children }) => {
 
   const fetchExpense = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/expenses/${id}`
       );
-      console.log("Expense fetching:", response.data);
-      setExpense(response.data);
-      console.log("expense", expense);
+
+      if (response.data !== undefined) {
+        console.log("Expense fetching:", response.data);
+        setExpense(response.data);
+      } else {
+        console.log("Expense fetching:", null);
+        setExpense(null);
+      }
+      console.log("check", check);
   
     } catch (error) {
       console.error('Error fetching expense:', error);
@@ -59,7 +78,7 @@ export const ExpenseContextProvider = ({ children }) => {
 
   const createExpense = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/expenses",
@@ -79,7 +98,7 @@ export const ExpenseContextProvider = ({ children }) => {
 
   const updateExpense = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/expenses",
@@ -99,7 +118,7 @@ export const ExpenseContextProvider = ({ children }) => {
 
   const deleteExpense = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/expenses/${id}`

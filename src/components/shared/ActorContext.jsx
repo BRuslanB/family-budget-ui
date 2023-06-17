@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useFormErrorContext } from './FormErrorContext';
+import { useRefreshContext } from './RefreshContext';
 import AuthContext from "./AuthContext";
 import createJwtInterceptor from "./jwtInterceptor";
 
@@ -8,24 +9,36 @@ const ActorContext = createContext();
 export const ActorContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
   // console.log("ActorContext1.formError=", formError);
+  const refreshContext = useRefreshContext();
 
   const [actorList, setActorList] = useState([]);
   const [actor, setActor] = useState(null);
-  const { user, refreshToken, logout } = useContext(AuthContext);
+  const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     fetchActorList();
   }, [user, refreshToken]);
+[]
+  useEffect(() => {
+    console.log("ActorContext -> Количество запросов в очереди:", 
+      refreshContext.requestQueue.length, refreshContext.requestQueue);
+  }, [refreshContext.requestQueue]);
 
   const fetchActorList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/actors'
       );
-      console.log("ActorList fetching:", response.data);
-      setActorList(response.data);
+
+      if (response.data !== undefined) {
+        console.log("ActorList fetching:", response.data);
+        setActorList(response.data);
+      } else {
+        console.log("CategoryList fetching:", null);
+        setActorList([]);
+      }
       console.log("actorList", actorList);
 
     } catch (error) {
@@ -39,13 +52,19 @@ export const ActorContextProvider = ({ children }) => {
 
   const fetchActor = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/actors/${id}`
       );
-      console.log("Actor fetching:", response.data);
-      setActor(response.data);
+
+      if (response.data !== undefined) {
+        console.log("Actor fetching:", response.data);
+        setActor(response.data);
+      } else {
+        console.log("Actor fetching:", null);
+        setActor(null);
+      }
       console.log("actor", actor);
   
     } catch (error) {
@@ -59,7 +78,7 @@ export const ActorContextProvider = ({ children }) => {
 
   const createActor = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/actors",
@@ -79,7 +98,7 @@ export const ActorContextProvider = ({ children }) => {
 
   const updateActor = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/actors",
@@ -99,7 +118,7 @@ export const ActorContextProvider = ({ children }) => {
 
   const deleteActor = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/actors/${id}`

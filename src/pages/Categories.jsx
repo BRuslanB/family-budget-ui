@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useCategoryContext } from "../components/shared/CategoryContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
@@ -6,7 +7,10 @@ import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap"
 const Categories = () => {
 
   const { formError, setFormError } = useFormErrorContext();
-  const { category, categoryList, fetchCategory, fetchCategoryList, createCategory, updateCategory, deleteCategory } = useCategoryContext();
+  const { category, categoryList, fetchCategory, fetchCategoryList, 
+    createCategory, updateCategory, deleteCategory } = useCategoryContext();
+  // const { isRefreshingToken, requestQueue, 
+  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
 
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
@@ -24,6 +28,9 @@ const Categories = () => {
     if (!categoryList) {
       fetchCategoryList();
     }
+    // if (isRefreshingToken && requestQueue.length > 0) {
+    //   processRequestQueue();
+    // }
   }, [categoryList, fetchCategoryList]);
 
   const handleToggleModal = (title, forceClose = false) => {

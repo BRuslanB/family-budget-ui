@@ -21,25 +21,35 @@ export const UserProfile = () => {
     setFormError(""); // Clearing a previous form error when mounting a component
   }, []);
 
-  useEffect(() => {
-    if (user && user.authorities) {
-      setSelectedRoles(user.authorities);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user && user.authorities) {
+  //     setSelectedRoles(user.authorities);
+  //   }
+  // }, [user]);
   
   useEffect(() => {
     if (user && refreshToken && !userProfile) {
       fetchUserProfile();
     }
-  }, [user, refreshToken, userProfile, fetchUserProfile]);
 
-  useEffect(() => {
+    if (user && user.authorities) {
+      setSelectedRoles(user.authorities);
+    }
+
     if (userProfile && firstName.current && lastName.current && birthDay.current) {
       firstName.current.value = userProfile.firstName || "";
       lastName.current.value = userProfile.lastName || "";
       birthDay.current.value = userProfile.birthDay || "";
     }
-  }, [userProfile, firstName.current, lastName.current, birthDay.current]);
+  }, [user, refreshToken, userProfile, fetchUserProfile]);
+
+  // useEffect(() => {
+  //   if (userProfile && firstName.current && lastName.current && birthDay.current) {
+  //     firstName.current.value = userProfile.firstName || "";
+  //     lastName.current.value = userProfile.lastName || "";
+  //     birthDay.current.value = userProfile.birthDay || "";
+  //   }
+  // }, [userProfile, firstName.current, lastName.current, birthDay.current]);
 
   const profileSubmit = async () => {
     const payload = {

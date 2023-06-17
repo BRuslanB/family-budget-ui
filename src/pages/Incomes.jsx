@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useIncomeContext } from "../components/shared/IncomeContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
 
 const Incomes = () => {
   const { formError, setFormError } = useFormErrorContext();
-  const { income, incomeList, fetchIncome, fetchIncomeList, createIncome, updateIncome, deleteIncome } = useIncomeContext();
-
+  const { income, incomeList, fetchIncome, fetchIncomeList, 
+    createIncome, updateIncome, deleteIncome } = useIncomeContext();
+  // const { isRefreshingToken, requestQueue, 
+  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
+  
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [newIncomeName, setNewIncomeName] = useState("");
@@ -23,6 +27,9 @@ const Incomes = () => {
     if (!incomeList) {
       fetchIncomeList();
     }
+    // if (isRefreshingToken && requestQueue.length > 0) {
+    //   processRequestQueue();
+    // }
   }, [incomeList, fetchIncomeList]);
 
   const handleToggleModal = (title, forceClose = false) => {

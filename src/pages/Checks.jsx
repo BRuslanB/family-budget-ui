@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useCheckContext } from "../components/shared/CheckContext";
 import { useIncomeContext } from "../components/shared/IncomeContext";
 import { useExpenseContext } from "../components/shared/ExpenseContext";
@@ -15,8 +16,10 @@ const Checks = () => {
   const { incomeList, fetchIncomeList } = useIncomeContext();
   const { expenseList, fetchExpenseList } = useExpenseContext();
   const { actorList, fetchActorList } = useActorContext();
-  const { receipt, fetchReceipt, receiptId, setReceiptId,
+  const { receipt, setReceipt, receiptId, setReceiptId, fetchReceipt, 
     createReceipt, updateReceipt, deleteReceipt } = useReceiptContext();
+  // const { isRefreshingToken, requestQueue, 
+  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
   
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
@@ -38,20 +41,23 @@ const Checks = () => {
   }, []);
 
   useEffect(() => {
-    fetchIncomeList();
-    fetchExpenseList();
-    fetchActorList();
-  }, []);
-
-  useEffect(() => {
     if (!checkList) {
       fetchCheckList();
+      fetchIncomeList();
+      fetchExpenseList();
+      fetchActorList();
     }
   }, [checkList, fetchCheckList]);
 
   useEffect(() => {
     console.log("RECEIPT ID=", receiptId);
     console.log("useEffect.deleteReceiptId=", deleteReceiptId);
+
+    if (receiptId !== null) {
+      handleFetchReceipt();
+    } else {
+      setReceipt(null);
+    }
   
     const updateCheckAndFetchList = async () => {
       if (
@@ -80,6 +86,8 @@ const Checks = () => {
     setSelectedIncomeId(null);
     setSelectedExpenseId(null);
     setSelectedActorId(null);
+    setReceiptFileType("");
+    setReceiptFileContent([]);
     handleToggleModal("", true);
   };
 
@@ -152,6 +160,11 @@ const Checks = () => {
     fetchCheckList(); // Updating the list after successful deletion Check
   };
 
+    const handleFetchReceipt = async () => {
+    await fetchReceipt(receiptId);
+    // console.log("Check.receipt", receipt);
+  };
+
   const handleAddReceipt = async () => {
     setFormError(""); // Clear previous form error
 
@@ -173,7 +186,8 @@ const Checks = () => {
     setFormError(""); // Clear previous form error
 
     checkId.current = id;
-    setReceiptId(object); // сохраняем текущее значение в receiptId 
+    setReceiptId(object); // Save the current value in receiptId
+
     handleToggleModal("Edit Receipt");
   };
 
@@ -206,7 +220,7 @@ const Checks = () => {
   const handleDeleteReceipt = async () => {
     await deleteReceipt(receiptId);
 
-    setReceiptId(""); // очищаем текущее значание в receiptId 
+    setReceiptId(""); // Clear the current value in receiptId
     handleToggleModal("");
   };
 
@@ -342,7 +356,7 @@ const Checks = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newCheckNote ? " " : newCheckNote}
+                    value={newCheckNote}
                     onChange={(e) => setNewCheckNote(e.target.value)}
                   />
                 </Form.Group>
@@ -446,7 +460,7 @@ const Checks = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newCheckNote ? " " : newCheckNote}
+                    value={newCheckNote}
                     onChange={(e) => setNewCheckNote(e.target.value)}
                   />
                 </Form.Group>
@@ -459,20 +473,30 @@ const Checks = () => {
         )}
         {modalTitle === "Edit Receipt" && (
           <Modal.Body>
-            {[ // Content wrapped in an array
-              <Form key="edit-receipt-form">
-                <Form.Group controlId="formCheckObject">
-                  <Form.Label>Object {receiptId}</Form.Label>
-                </Form.Group>
-                <Form.Group controlId="formCheckObject">
-                  <Form.Label>File Receipt</Form.Label>
-                  <Form.Control
-                    type="file"
-                    onChange={handleFileChange}
-                  />
-                </Form.Group>
-              </Form>
-            ]}
+            <Form key="edit-receipt-form">
+              <Form.Group controlId="formCheckObject">
+                {receipt && (
+                  <div style={{ width: '100%' }}>
+                    <p>Preview:</p>
+                    {receipt.fileType.startsWith("image/") ? (
+                      <img className="preview-image" alt="Receipt Preview"
+                        src={`data:${receipt.fileType};base64,
+                          ${btoa(receipt.fileContent.split(',').map(Number).reduce((acc, value) => {
+                            return acc + String.fromCharCode(value);
+                          }, ''))}`
+                        }
+                      />
+                    ) : (
+                      <p>No preview available</p>
+                    )}
+                  </div>
+                )}
+              </Form.Group>
+              <Form.Group controlId="formCheckObject">
+                <Form.Label>File Receipt:</Form.Label>
+                <Form.Control type="file" onChange={handleFileChange} />
+              </Form.Group>
+            </Form>
           </Modal.Body>
         )}
         <Modal.Footer>

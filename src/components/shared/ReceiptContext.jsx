@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useFormErrorContext } from './FormErrorContext';
+import { useRefreshContext } from './RefreshContext';
 import AuthContext from "./AuthContext";
 import createJwtInterceptor from "./jwtInterceptor";
 
@@ -8,14 +9,25 @@ const ReceiptContext = createContext();
 export const ReceiptContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
   // console.log("ReceiptContext1.formError=", formError);
+  const refreshContext = useRefreshContext();
 
   const [receipt, setReceipt] = useState(null);
   const [receiptId, setReceiptId] = useState("");
-  const { user, refreshToken, logout } = useContext(AuthContext);
- 
+  const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
+
+  useEffect(() => { 
+    console.log("ReceiptContext.user", user)
+    console.log("ReceiptContext.refreshToken", refreshToken)
+  }, [user, refreshToken]);
+
+  useEffect(() => {
+    console.log("ReceiptContext -> Количество запросов в очереди:", 
+      refreshContext.requestQueue.length, refreshContext.requestQueue);
+  }, [refreshContext.requestQueue]);
+
   const fetchReceipt = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8002/api/receipts/${id}`
@@ -35,7 +47,7 @@ export const ReceiptContextProvider = ({ children }) => {
 
   const createReceipt = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8002/api/receipts",
@@ -56,7 +68,7 @@ export const ReceiptContextProvider = ({ children }) => {
 
   const updateReceipt = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8002/api/receipts",
@@ -76,7 +88,7 @@ export const ReceiptContextProvider = ({ children }) => {
 
   const deleteReceipt = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8002/api/receipts/${id}`
@@ -94,7 +106,8 @@ export const ReceiptContextProvider = ({ children }) => {
   };
 
   return (
-    <ReceiptContext.Provider value={{ receipt, receiptId, setReceiptId, formError, setFormError, 
+    <ReceiptContext.Provider value={{ receipt, setReceipt, 
+      receiptId, setReceiptId, formError, setFormError, 
       fetchReceipt, createReceipt, updateReceipt, deleteReceipt }}>
       {children}
     </ReceiptContext.Provider>

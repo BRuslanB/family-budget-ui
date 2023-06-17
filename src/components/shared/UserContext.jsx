@@ -2,6 +2,7 @@ import axios from 'axios';
 import jwt_decode from "jwt-decode";
 import { useContext, useState, useEffect, createContext } from 'react';
 import { useFormErrorContext } from './FormErrorContext';
+import { useRefreshContext } from './RefreshContext';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from "./AuthContext";
 import createJwtInterceptor from "./jwtInterceptor";
@@ -11,28 +12,40 @@ const UserContext = createContext();
 export const UserContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
   // console.log("UserContext1.formError=", formError);
+  const refreshContext = useRefreshContext();
 
   const [userProfile, setUserProfile] = useState(null);
   const { user, refreshToken, setUser, setRefreshToken, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => { 
-    if (user && refreshToken) { // Update on user or refresh Token change
-      fetchUserProfile();
-    }
+    fetchUserProfile();
   }, [user, refreshToken]);
+
+  useEffect(() => {
+    console.log("UserContext -> Количество запросов в очереди:", 
+      refreshContext.requestQueue.length, refreshContext.requestQueue);
+  }, [refreshContext.requestQueue]);
 
   const fetchUserProfile = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8003/api/users/getuser'
       );
-      setUserProfile(response.data);
+
+      if (response.data !== undefined) {
+        console.log("User Profile fetching:", response.data);
+        setUserProfile(response.data);
+      } else {
+        console.log("User Profile fetching:", null);
+        setUserProfile(null);
+      }
+      console.log("User Profile", userProfile);
 
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.error('Error fetching User Profile:', error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
         // console.log("UserContext2.formError=", formError);
@@ -42,7 +55,7 @@ export const UserContextProvider = ({ children }) => {
 
   const updateProfile = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         'http://localhost:8003/api/users/profile',
@@ -73,7 +86,7 @@ export const UserContextProvider = ({ children }) => {
       navigate("/");
 
     } catch (error) {
-      console.error("Error saving profile:", error);
+      console.error("Error saving User Profile:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
         console.log("UserContext3.formError=", formError);
@@ -83,7 +96,7 @@ export const UserContextProvider = ({ children }) => {
 
   const updatePassword = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, logout);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8003/api/users/password",
@@ -94,7 +107,7 @@ export const UserContextProvider = ({ children }) => {
       navigate("/");
 
     } catch (error) {
-      console.error("Error updating password:", error);
+      console.error("Error updating User Password:", error);
       if (error.response && error.response.status === 400) {
         setFormError(error.response.data.message);
         console.log("UserContext4.formError=", formError);

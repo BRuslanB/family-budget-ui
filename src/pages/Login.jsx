@@ -1,4 +1,4 @@
-import { useContext, useRef, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import Button from "react-bootstrap/Button";
@@ -8,31 +8,28 @@ import AuthContext from "../components/shared/AuthContext";
 const Login = () => {
   
   const { formError, setFormError } = useFormErrorContext();
-  const {login}= useContext(AuthContext)
+  const { login }= useContext(AuthContext)
 
-  const userEmail = useRef("");
-  const password = useRef("");
+  const [userEmail, setUserEmail] = useState("");
+  const [password, setPassword] = useState("");
  
   useEffect(() => {
     setFormError(""); // Clearing a previous form error when mounting a component
   }, []);
 
   const loginSubmit = async () => {
-    let payload = {
-      email: userEmail.current.value,
-      password: password.current.value
-    }
     setFormError(""); // Clear previous form error
-      if (
-        userEmail.current.value.trim() === "" ||
-        password.current.value.trim() === ""
-      ) {
+
+    if (userEmail.trim() === "" ||
+        password.trim() === "")
+    {
         setFormError("Please fill in all the required fields.");
-      } else {
+    } else {
+        const payload = {
+          email: userEmail,
+          password: password
+        };
         await login(payload);
-        // Clear input fields
-        userEmail.current.value = "";
-        password.current.value = "";
     }
   };
   
@@ -45,14 +42,22 @@ const Login = () => {
             <form>
               <Form.Group className="mb-2" controlId="formUserEmail">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="text" ref={userEmail} />
+                <Form.Control
+                    type="email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                  />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" ref={password} />
+                <Form.Control
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
               </Form.Group>
               {formError && <div className="text-danger">{formError}</div>}
-              <Button className="button_style" onClick={loginSubmit}>
+              <Button className="button_style mt-2" onClick={loginSubmit}>
                 SIGN IN
               </Button>
             </form>

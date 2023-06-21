@@ -2,7 +2,6 @@ import axios from 'axios';
 import jwt_decode from "jwt-decode";
 import { useContext, useState, useEffect, createContext } from 'react';
 import { useFormErrorContext } from './FormErrorContext';
-import { useRefreshContext } from './RefreshContext';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from "./AuthContext";
 import createJwtInterceptor from "./jwtInterceptor";
@@ -10,26 +9,24 @@ import createJwtInterceptor from "./jwtInterceptor";
 const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
+
   const { formError, setFormError } = useFormErrorContext();
   // console.log("UserContext1.formError=", formError);
-  const refreshContext = useRefreshContext();
 
   const [userProfile, setUserProfile] = useState(null);
   const { user, refreshToken, setUser, setRefreshToken, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => { 
-    fetchUserProfile();
+    console.log("UserContext.user", user)
+    console.log("UserContext.refreshToken", refreshToken)
+    // fetchUserProfile();
   }, [user, refreshToken]);
-
-  useEffect(() => {
-    console.log("UserContext -> Количество запросов в очереди:", 
-      refreshContext.requestQueue.length, refreshContext.requestQueue);
-  }, [refreshContext.requestQueue]);
 
   const fetchUserProfile = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8003/api/users/getuser'
@@ -45,17 +42,31 @@ export const UserContextProvider = ({ children }) => {
       console.log("User Profile", userProfile);
 
     } catch (error) {
-      console.error('Error fetching User Profile:', error);
       if (error.response && error.response.status === 400) {
+        console.error('Error fetching User Profile:', error);
         setFormError(error.response.data.message);
         // console.log("UserContext2.formError=", formError);
+      }
+      if (error.response && error.response.status === 403) {
+        const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
+        const newAxiosInstance = newInterceptor;
+        try {
+          const response = await newAxiosInstance.get(
+            'http://localhost:8003/api/users/getuser'
+          );
+          console.log("User Profile fetching with refreshed token:", response.data);
+          // alert(response.data.message); // Display the response message
+        } catch (error) {
+          console.error("Error fetching User Profile with refreshed token:", error);
+        }
       }
     }
   };
 
   const updateProfile = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         'http://localhost:8003/api/users/profile',
@@ -86,17 +97,32 @@ export const UserContextProvider = ({ children }) => {
       navigate("/");
 
     } catch (error) {
-      console.error("Error saving User Profile:", error);
       if (error.response && error.response.status === 400) {
+        console.error("Error saving User Profile:", error);
         setFormError(error.response.data.message);
-        console.log("UserContext3.formError=", formError);
+        // console.log("UserContext3.formError=", formError);
       } 
+      if (error.response && error.response.status === 403) {
+        const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
+        const newAxiosInstance = newInterceptor;
+        try {
+          const response = await newAxiosInstance.put(
+            'http://localhost:8003/api/users/profile',
+            payload
+          );
+          console.log("User Profile updated with refreshed token:", response.data);
+          // alert(response.data.message); // Display the response message
+        } catch (error) {
+          console.error("Error updating User Profile with refreshed token:", error);
+        }
+      }
     }
   };
 
   const updatePassword = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8003/api/users/password",
@@ -107,10 +133,24 @@ export const UserContextProvider = ({ children }) => {
       navigate("/");
 
     } catch (error) {
-      console.error("Error updating User Password:", error);
       if (error.response && error.response.status === 400) {
+        console.error("Error updating User Password:", error);
         setFormError(error.response.data.message);
-        console.log("UserContext4.formError=", formError);
+        // console.log("UserContext4.formError=", formError);
+      }
+      if (error.response && error.response.status === 403) {
+        const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
+        const newAxiosInstance = newInterceptor;
+        try {
+          const response = await newAxiosInstance.put(
+            "http://localhost:8003/api/users/password",
+            payload
+          );
+          console.log("User Password updated with refreshed token:", response.data);
+          // alert(response.data.message); // Display the response message
+        } catch (error) {
+          console.error("Error updating User Password with refreshed token:", error);
+        }
       }
     }
   };

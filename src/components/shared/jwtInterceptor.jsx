@@ -4,9 +4,7 @@ import jwt_decode from "jwt-decode";
 let isRefreshingToken = false; // Shared variable for all instances
 
 const createJwtInterceptor = (userSub, refreshTokenUUID,
-  SetRefreshToken, logoutCallback, refreshContext) => {
-
-  const { requestQueue, setRequestQueue, enqueueRequest } = refreshContext;
+  SetRefreshToken, logoutCallback) => {
 
   const jwtInterceptor = axios.create({});
 
@@ -28,33 +26,35 @@ const createJwtInterceptor = (userSub, refreshTokenUUID,
 
       if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
-        alert("Connection to server lost.\nPlease contact technical support.");
+        alert("Connection to Server lost.\nPlease contact technical support.");
         logoutCallback();
         return null;
-        // return Promise.reject(error);
       }
 
       if (error.response && error.response.status === 403 && !isRefreshingToken) {
 
-        if (!isRefreshingToken) {
-          // Added error request to queue
-          enqueueRequest(error.config);
+          if (!isRefreshingToken) {
 
-          isRefreshingToken = true; // Setting the flag
+            isRefreshingToken = true; // Setting the flag
 
-          try {
-            await refreshAccessToken(userSub, refreshTokenUUID, SetRefreshToken, 
-              setRequestQueue, requestQueue, jwtInterceptor);
+            try {
+              const response = await refreshAccessToken(userSub, refreshTokenUUID);
 
-          } catch (error) {
+              // Refreshing tokens in localStorage and in the Application
+              const { access_token, refresh_token } = response.data;
+              localStorage.setItem("tokens", JSON.stringify({ access_token, refresh_token }));
+              SetRefreshToken(jwt_decode(refresh_token));
 
-            alert("Reauthorization error.\nPlease log in again.");
-            logoutCallback();
-            return Promise.reject(error);
+              isRefreshingToken = false; // Reset the flag after refreshing the token
+
+            } catch (error) {
+
+              alert("Reauthorization error.\nPlease log in again.");
+              logoutCallback();
+              return Promise.reject(error);
+            }
+
           }
-
-          isRefreshingToken = false; // Reset the flag after refreshing the token
-        }
       }
 
       return Promise.reject(error);
@@ -64,8 +64,7 @@ const createJwtInterceptor = (userSub, refreshTokenUUID,
   return jwtInterceptor;
 };
 
-async function refreshAccessToken(userSub, refreshTokenUUID, SetRefreshToken, 
-  setRequestQueue, requestQueue, jwtInterceptor) {
+async function refreshAccessToken(userSub, refreshTokenUUID) {
 
   const axiosInstance = axios.create();
 
@@ -83,48 +82,8 @@ async function refreshAccessToken(userSub, refreshTokenUUID, SetRefreshToken,
         },
       }
     );
-
-    // Refreshing tokens in localStorage and in the Application
-    const { access_token, refresh_token } = response.data;
-    localStorage.setItem("tokens", JSON.stringify({ access_token, refresh_token }));
-    SetRefreshToken(jwt_decode(refresh_token));
-
-    const refreshedAxios = axios.create(); // Creating a new axios instance
-    refreshedAxios.interceptors.response.handlers =
-      [...jwtInterceptor.interceptors.response.handlers];
-    axios.interceptors.response.handlers =
-      [...refreshedAxios.interceptors.response.handlers];
-
-    if (requestQueue.length > 0) {
-      const updatedRequests = requestQueue.map((config) => {
-        // Update request queue with new access token
-        config.headers["Authorization"] = `Bearer ${access_token}`;
-        return refreshedAxios.request(config);
-      });
-    
-      // Current request queue
-      const queueLength = requestQueue.length;
-      console.log("Current request queue = ", queueLength);
-    
-      if (queueLength > 0) {
-        return Promise.all(updatedRequests)
-          .then(() => {
-            // All requests in the queue have been completed
-            setRequestQueue([]); // Сlearing the queue
-          })
-          .catch((error) => {
-            // Error while executing requests from the queue
-            setRequestQueue([]); // Сlearing the queue
-          });
-      }
-    } else {
-      setRequestQueue([]); // Сlearing the queue
-      console.log("Queue is empty");
-    }
-
+    return response;
   } catch (error) {
-
-    setRequestQueue([]); // Сlearing the queue
     console.log("Error refreshtoken:", error);
     throw error;
   }

@@ -1,4 +1,4 @@
-import { useContext, useRef, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import Button from "react-bootstrap/Button";
@@ -10,45 +10,38 @@ const Register = () => {
   const { formError, setFormError } = useFormErrorContext();
   const {register}= useContext(AuthContext)
 
-  const userEmail = useRef("");
-  const firstName = useRef("");
-  const lastName = useRef("");
-  const birthDay = useRef("");
-  const password = useRef("");
-  const rePassword = useRef("");
+  const [userEmail, setUserEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [birthDay, setBirthDay] = useState("");
+  const [password, setPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
  
   useEffect(() => {
     setFormError(""); // Clearing a previous form error when mounting a component
   }, []);
 
   const registerSubmit = async () => {
-    let payload = {
-      email: userEmail.current.value,
-      firstName: firstName.current.value,
-      lastName: lastName.current.value,
-      birthDay: birthDay.current.value,
-      password: password.current.value,
-      rePassword: rePassword.current.value
-    }
     setFormError(""); // Clear previous form error
-    if (
-      userEmail.current.value.trim() === "" ||
-      firstName.current.value.trim() === "" ||
-      lastName.current.value.trim() === "" ||
-      birthDay.current.value.trim() === "" ||
-      password.current.value.trim() === "" ||
-      rePassword.current.value.trim() === ""
-    ) {
+
+    if (userEmail.trim() === "" ||
+        firstName.trim() === "" ||
+        lastName.trim() === "" ||
+        birthDay.trim() === "" ||
+        password.trim() === "" ||
+        rePassword.trim() === "")
+    {
       setFormError("Please fill in all the required fields.");
     } else {
+      const payload = {
+        email: userEmail,
+        firstName: firstName,
+        lastName: lastName,
+        birthDay: birthDay,
+        password: password,
+        rePassword: rePassword
+      };
       await register(payload);
-      // Clear input fields
-      userEmail.current.value = "";
-      firstName.current.value = "";
-      lastName.current.value = "";
-      birthDay.current.value = "";
-      password.current.value = "";
-      rePassword.current.value = "";
     }
   };
   
@@ -61,30 +54,54 @@ const Register = () => {
             <form>
               <Form.Group className="mb-2" controlId="formUserEmail">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="text" ref={userEmail} />
+                <Form.Control
+                    type="email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                  />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formUserFirstName">
                 <Form.Label>First Name</Form.Label>
-                <Form.Control type="text" ref={firstName} />
+                <Form.Control
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formUserLastName">
                 <Form.Label>Last Name</Form.Label>
-                <Form.Control type="text" ref={lastName} />
+                <Form.Control
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formBirthDay">
                 <Form.Label>Birth Day</Form.Label>
-                <Form.Control type="date" ref={birthDay} />
+                <Form.Control
+                    type="date"
+                    value={birthDay}
+                    onChange={(e) => setBirthDay(e.target.value)}
+                  />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" ref={password} />
+                <Form.Control
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formRePassword">
                 <Form.Label>Confirm Password</Form.Label>
-                <Form.Control type="password" ref={rePassword} />
+                <Form.Control
+                    type="password"
+                    value={rePassword}
+                    onChange={(e) => setRePassword(e.target.value)}
+                  />
               </Form.Group>
               {formError && <div className="text-danger">{formError}</div>}
-              <Button className="button_style" onClick={registerSubmit}>
+              <Button className="button_style mt-2" onClick={registerSubmit}>
                 SIGN UP
               </Button>
             </form>

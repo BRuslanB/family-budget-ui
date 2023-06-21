@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import { FormErrorContextProvider } from "./components/shared/FormErrorContext"; 
 import { AuthContextProvider } from "./components/shared/AuthContext";
 import { UserContextProvider } from "./components/shared/UserContext"; 
-import { RefreshContextProvider } from "./components/shared/RefreshContext"; 
 import { CategoryContextProvider } from "./components/shared/CategoryContext"; 
 import { ExpenseContextProvider } from "./components/shared/ExpenseContext"; 
 import { IncomeContextProvider } from "./components/shared/IncomeContext"; 
@@ -28,109 +27,107 @@ function App() {
     <>
       <FormErrorContextProvider>
         <AuthContextProvider>
-          <RefreshContextProvider>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Home />}></Route>
-                <Route
-                  path="/payments"
-                  element={
-                    <ProtectedRoute accessBy="authenticated">
-                      <IncomeContextProvider>
-                        <ExpenseContextProvider>
-                          <ActorContextProvider>
-                            <ReceiptContextProvider>
-                              <CheckContextProvider>
-                                <Checks />
-                              </CheckContextProvider>
-                            </ReceiptContextProvider>
-                          </ActorContextProvider>
-                        </ExpenseContextProvider>
-                      </IncomeContextProvider>
-                    </ProtectedRoute>
-                  }
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />}></Route>
+              <Route
+                path="/payments"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <IncomeContextProvider>
+                      <ExpenseContextProvider>
+                        <ActorContextProvider>
+                          <ReceiptContextProvider>
+                            <CheckContextProvider>
+                              <Checks />
+                            </CheckContextProvider>
+                          </ReceiptContextProvider>
+                        </ActorContextProvider>
+                      </ExpenseContextProvider>
+                    </IncomeContextProvider>
+                  </ProtectedRoute>
+                }
+              ></Route>
+              <Route
+                path="/categories"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <CategoryContextProvider>
+                      <Categories />
+                    </CategoryContextProvider>
+                  </ProtectedRoute>
+                }
                 ></Route>
-                <Route
-                  path="/categories"
-                  element={
-                    <ProtectedRoute accessBy="authenticated">
-                      <CategoryContextProvider>
-                        <Categories />
-                      </CategoryContextProvider>
-                    </ProtectedRoute>
-                  }
-                  ></Route>
-                <Route
-                  path="/expenses"
-                  element={
-                    <ProtectedRoute accessBy="authenticated">
-                      <CategoryContextProvider>
-                        <ExpenseContextProvider>
-                          <Expenses />
-                        </ExpenseContextProvider>
-                      </CategoryContextProvider>
-                    </ProtectedRoute>
-                  }
-                  ></Route>
-                <Route
-                  path="/incomes"
-                  element={
-                    <ProtectedRoute accessBy="authenticated">
-                      <IncomeContextProvider>
-                        <Incomes />
-                      </IncomeContextProvider>
-                    </ProtectedRoute>
-                  }
-                  ></Route>
-                <Route
-                  path="/actors"
-                  element={
-                    <ProtectedRoute accessBy="authenticated">
-                      <ActorContextProvider>
-                        <Actors />
-                      </ActorContextProvider>
-                    </ProtectedRoute>
-                  }
-                  ></Route>
-                <Route
-                  path="/login"
-                  element={
-                    <ProtectedRoute accessBy="non-authenticated">
-                      <Login />
-                    </ProtectedRoute>
-                  }
+              <Route
+                path="/expenses"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <CategoryContextProvider>
+                      <ExpenseContextProvider>
+                        <Expenses />
+                      </ExpenseContextProvider>
+                    </CategoryContextProvider>
+                  </ProtectedRoute>
+                }
                 ></Route>
-                <Route
-                  path="/register"
-                  element={
-                    <ProtectedRoute accessBy="non-authenticated">
-                      <Register />
-                    </ProtectedRoute>
-                  }
+              <Route
+                path="/incomes"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <IncomeContextProvider>
+                      <Incomes />
+                    </IncomeContextProvider>
+                  </ProtectedRoute>
+                }
                 ></Route>
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute accessBy="authenticated">
-                      <UserContextProvider>
-                        <UserProfile />
-                      </UserContextProvider>
-                    </ProtectedRoute>
-                  }
+              <Route
+                path="/actors"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <ActorContextProvider>
+                      <Actors />
+                    </ActorContextProvider>
+                  </ProtectedRoute>
+                }
                 ></Route>
-                <Route
-                  path="/password"
-                  element={
-                    <ProtectedRoute accessBy="authenticated">
-                      <UserContextProvider>
-                        <UserPassword />
-                      </UserContextProvider>
-                    </ProtectedRoute>
-                  }
-                ></Route>
-              </Routes>
-            </Layout>
-          </RefreshContextProvider>
+              <Route
+                path="/login"
+                element={
+                  <ProtectedRoute accessBy="non-authenticated">
+                    <Login />
+                  </ProtectedRoute>
+                }
+              ></Route>
+              <Route
+                path="/register"
+                element={
+                  <ProtectedRoute accessBy="non-authenticated">
+                    <Register />
+                  </ProtectedRoute>
+                }
+              ></Route>
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <UserContextProvider>
+                      <UserProfile />
+                    </UserContextProvider>
+                  </ProtectedRoute>
+                }
+              ></Route>
+              <Route
+                path="/password"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <UserContextProvider>
+                      <UserPassword />
+                    </UserContextProvider>
+                  </ProtectedRoute>
+                }
+              ></Route>
+            </Routes>
+          </Layout>
         </AuthContextProvider>
       </FormErrorContextProvider>
     </>

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useIncomeContext } from "../components/shared/IncomeContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
@@ -8,11 +7,10 @@ const Incomes = () => {
   const { formError, setFormError } = useFormErrorContext();
   const { income, incomeList, fetchIncome, fetchIncomeList, 
     createIncome, updateIncome, deleteIncome } = useIncomeContext();
-  // const { isRefreshingToken, requestQueue, 
-  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
   
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+
   const [newIncomeName, setNewIncomeName] = useState("");
   const [newIncomeDescription, setNewIncomeDescription] = useState("");
   const [deleteIncomeId, setDeleteIncomeId] = useState("");
@@ -24,12 +22,9 @@ const Incomes = () => {
   }, []);
 
   useEffect(() => {
-    if (!incomeList) {
+    if (incomeList.length === 0) {
       fetchIncomeList();
     }
-    // if (isRefreshingToken && requestQueue.length > 0) {
-    //   processRequestQueue();
-    // }
   }, [incomeList, fetchIncomeList]);
 
   const handleToggleModal = (title, forceClose = false) => {
@@ -40,6 +35,8 @@ const Incomes = () => {
   const handleModalHide = () => {
     setNewIncomeName("");
     setNewIncomeDescription("");
+    setDeleteIncomeId("");
+
     handleToggleModal("", true);
   };
   
@@ -92,7 +89,6 @@ const Incomes = () => {
 
     await deleteIncome(deleteIncomeId);
 
-    setDeleteIncomeId("");
     handleToggleModal("");
     fetchIncomeList(); // Updating the list after successful deletion
   };

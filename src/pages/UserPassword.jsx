@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useUserContext } from "../components/shared/UserContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
@@ -9,33 +9,30 @@ export const UserPassword = () => {
   
   const { updatePassword } = useUserContext();
   const { formError, setFormError } = useFormErrorContext();
-  const password = useRef("");
-  const newPassword = useRef("");
-  const rePassword = useRef("");
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
   
   useEffect(() => {
     setFormError(""); // Clearing a previous form error when mounting a component
   }, []);
 
   const passwordSubmit = async () => {
-    const payload = {
-      password: password.current.value,
-      newPassword: newPassword.current.value,
-      rePassword: rePassword.current.value
-    };    
     setFormError(""); // Clear previous form error
-    if (
-      password.current.value.trim() === "" ||
-      newPassword.current.value.trim() === "" ||
-      rePassword.current.value.trim() === ""
-    ) {
+
+    if (currentPassword.trim() === "" ||
+        newPassword.trim() === "" ||
+        rePassword.trim() === "")
+    {
       setFormError("Please fill in all the required fields.");
     } else {
+      const payload = {
+        password: currentPassword,
+        newPassword: newPassword,
+        rePassword: rePassword
+      };    
       await updatePassword(payload);
-      // Clear input fields
-      password.current.value = "";
-      newPassword.current.value = "";
-      rePassword.current.value = "";
     }
   };
 
@@ -46,20 +43,32 @@ export const UserPassword = () => {
           <Col className="col-md-4 offset-md-4">
             <legend>Password Update Form</legend>
             <form>
-              <Form.Group className="mb-2" controlId="formOldPassword">
-                <Form.Label>Old Password</Form.Label>
-                <Form.Control type="password" ref={password} />
+              <Form.Group className="mb-2" controlId="formCurrentPassword">
+                <Form.Label>Current Password</Form.Label>
+                <Form.Control
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formNewPassword">
                 <Form.Label>New Password</Form.Label>
-                <Form.Control type="password" ref={newPassword} />
+                <Form.Control
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formRePassword">
                 <Form.Label>Confirm Password</Form.Label>
-                <Form.Control type="password" ref={rePassword} />
+                <Form.Control
+                    type="password"
+                    value={rePassword}
+                    onChange={(e) => setRePassword(e.target.value)}
+                  />
               </Form.Group>
               {formError && <div className="text-danger">{formError}</div>}
-              <Button className="button_style" onClick={passwordSubmit}>
+              <Button className="button_style mt-2" onClick={passwordSubmit}>
                 UPDATE
               </Button>
             </form>

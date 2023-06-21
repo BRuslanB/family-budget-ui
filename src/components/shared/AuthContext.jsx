@@ -7,6 +7,7 @@ import { useFormErrorContext } from './FormErrorContext';
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
+
   const { formError, setFormError } = useFormErrorContext();
   // console.log("AuthContext1.formError=", formError);
 
@@ -42,18 +43,21 @@ export const AuthContextProvider = ({ children }) => {
         "http://localhost:8003/api/auth/signin",
         payload
       );
+      console.log("SignIn successfully!");
+
       localStorage.setItem("tokens", JSON.stringify(apiResponse.data));
       setUser(jwt_decode(apiResponse.data.access_token));
       setRefreshToken(jwt_decode(apiResponse.data.refresh_token));
       navigate("/");
+
     } catch (error) {
-      console.error("Error signin:", error);
       if (error.response && error.response.status === 400) {
+        console.error("Error SignIn:", error);
         setFormError(error.response.data.message);
-        console.log("AuthContext2.formError=", formError);
+        // console.log("AuthContext2.formError=", formError);
       } else if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
-        alert("Connection to server lost.\nPlease contact technical support.");
+        alert("Connection to Server lost.\nPlease contact technical support.");
         logout();
       }
     }
@@ -65,17 +69,18 @@ export const AuthContextProvider = ({ children }) => {
         "http://localhost:8003/api/auth/signup",
         payload
       );
+      console.log("SignUp successfully!");
+
       alert(apiResponse.data.message); // Display the response messagee
       navigate("/");
   
     } catch (error) {
-      console.error("Error signin:", error);
       if (error.response && error.response.status === 400) {
-        setFormError(error.response.data.message);
-        console.log("AuthContext3.formError=", formError);
+        console.error("Error SignUp:", error);
+        // console.log("AuthContext3.formError=", formError);
       } else if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
-        alert("Connection to server lost.\nPlease contact technical support.");
+        alert("Connection to Server lost.\nPlease contact technical support.");
         logout();
       }
     }
@@ -83,11 +88,18 @@ export const AuthContextProvider = ({ children }) => {
 
   const logout = async () => {
     try {
+      // const apiResponse = await axios.post(
+      //   "http://localhost:8003/api/auth/signout"
+      // );
+      const cancelTokenSource = axios.CancelToken.source();
       const apiResponse = await axios.post(
-        "http://localhost:8003/api/auth/signout"
-      );
+        "http://localhost:8003/api/auth/signout", {
+        cancelToken: cancelTokenSource.token, // Pass the cancel token to the request
+      });
+      console.log("SignOut successfully!");
+
     } catch (error) {
-      console.error("Error signout:", error);
+      console.error("Error SignOut:", error);
     }
     localStorage.removeItem("tokens");
     setUser(null);

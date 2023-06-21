@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useActorContext } from "../components/shared/ActorContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
@@ -9,11 +8,10 @@ const Actors = () => {
   const { formError, setFormError } = useFormErrorContext();
   const { actor, actorList, fetchActor, fetchActorList, 
     createActor, updateActor, deleteActor } = useActorContext();
-  // const { isRefreshingToken, requestQueue, 
-  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
 
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+
   const [newActorName, setNewActorName] = useState("");
   const [newActorDescription, setNewActorDescription] = useState("");
   const [deleteActorId, setDeleteActorId] = useState("");
@@ -25,7 +23,8 @@ const Actors = () => {
   }, []);
 
   useEffect(() => {
-    if (!actorList) {
+    console.log("Actor.actorList", actorList);
+    if (actorList.length === 0) {
       fetchActorList();
     }
   }, [actorList, fetchActorList]);
@@ -38,6 +37,8 @@ const Actors = () => {
   const handleModalHide = () => {
     setNewActorName("");
     setNewActorDescription("");
+    setDeleteActorId("");
+
     handleToggleModal("", true);
   };
   
@@ -90,7 +91,6 @@ const Actors = () => {
 
     await deleteActor(deleteActorId);
 
-    setDeleteActorId("");
     handleToggleModal("");
     fetchActorList(); // Updating the list after successful deletion
   };

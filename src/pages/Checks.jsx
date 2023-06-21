@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useCheckContext } from "../components/shared/CheckContext";
 import { useIncomeContext } from "../components/shared/IncomeContext";
 import { useExpenseContext } from "../components/shared/ExpenseContext";
@@ -18,11 +17,10 @@ const Checks = () => {
   const { actorList, fetchActorList } = useActorContext();
   const { receipt, setReceipt, receiptId, setReceiptId, fetchReceipt, 
     createReceipt, updateReceipt, deleteReceipt } = useReceiptContext();
-  // const { isRefreshingToken, requestQueue, 
-  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
   
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+
   const [newCheckVal, setNewCheckVal] = useState(null);
   const [newCheckDate, setNewCheckDate] = useState("");
   const [newCheckNote, setNewCheckNote] = useState("");
@@ -41,7 +39,7 @@ const Checks = () => {
   }, []);
 
   useEffect(() => {
-    if (!checkList) {
+    if (checkList.length === 0) {
       fetchCheckList();
       fetchIncomeList();
       fetchExpenseList();
@@ -50,29 +48,25 @@ const Checks = () => {
   }, [checkList, fetchCheckList]);
 
   useEffect(() => {
-    console.log("RECEIPT ID=", receiptId);
-    console.log("useEffect.deleteReceiptId=", deleteReceiptId);
+    console.log("Check.useEffect.receipt", receipt);
+    console.log("Check.useEffect.receiptId=", receiptId);
+    console.log("Check.useEffect.deleteReceiptId=", deleteReceiptId);
 
-    if (receiptId !== null) {
+    if (receiptId) {
       handleFetchReceipt();
-    } else {
-      setReceipt(null);
     }
-  
+
     const updateCheckAndFetchList = async () => {
-      if (
-        (receiptId !== null && receiptId !== "") ||
-        (receiptId !== deleteReceiptId &&
-          deleteReceiptId !== null &&
-          deleteReceiptId !== "")
-      ) {
+      if ((receiptId && receiptFileType && receiptFileContent.length !== 0) ||
+          (!receiptId && deleteReceiptId)) //&& (receipt?.id == deleteReceiptId)) 
+      {
         await handleUpdateCheckObject();
         await fetchCheckList();
       }
     };
-  
     updateCheckAndFetchList(); // Calling an async function immediately
-  }, [receiptId]);
+
+  }, [receiptId, deleteReceiptId]);
 
   const handleToggleModal = (title, forceClose = false) => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
@@ -86,16 +80,22 @@ const Checks = () => {
     setSelectedIncomeId(null);
     setSelectedExpenseId(null);
     setSelectedActorId(null);
+    setDeleteCheckId("");
+
+    setReceipt(null);
+    setReceiptId("");
     setReceiptFileType("");
     setReceiptFileContent([]);
+    setDeleteReceiptId("");
+
     handleToggleModal("", true);
   };
 
   const handleAddCheck = async () => {
     setFormError(""); // Clear previous form error
 
-    if (newCheckVal === null || newCheckDate.trim() === "" || selectedActorId === null || 
-      (selectedIncomeId === null & selectedExpenseId === null)) {
+    if (!newCheckVal || newCheckDate.trim() === "" || !selectedActorId || 
+      (!selectedIncomeId && !selectedExpenseId)) {
       setFormError("Please fill in all the required fields.");
     } else {
       const payload = {
@@ -129,8 +129,8 @@ const Checks = () => {
   const handleUpdateCheck = async () => {
     setFormError(""); // Clear previous form error
   
-    if (newCheckVal === null || newCheckDate.trim() === "" || selectedActorId === null || 
-      (selectedIncomeId === null & selectedExpenseId === null)) {
+    if (!newCheckVal || newCheckDate.trim() === "" || !selectedActorId || 
+      (!selectedIncomeId && !selectedExpenseId)) {
       setFormError("Please fill in all the required fields.");
     } else {
       const payload = {
@@ -155,14 +155,12 @@ const Checks = () => {
 
     await deleteCheck(deleteCheckId);
 
-    setDeleteCheckId("");
     handleToggleModal("");
     fetchCheckList(); // Updating the list after successful deletion Check
   };
 
-    const handleFetchReceipt = async () => {
+  const handleFetchReceipt = async () => {
     await fetchReceipt(receiptId);
-    // console.log("Check.receipt", receipt);
   };
 
   const handleAddReceipt = async () => {
@@ -176,7 +174,7 @@ const Checks = () => {
         // fileContent: receiptFileContent
         fileContent: new String(receiptFileContent) // Convert to string
       };
-      await createReceipt(payload); // получаем receiptId
+      await createReceipt(payload); // Get new receiptId
 
       handleToggleModal("");
     }
@@ -477,7 +475,7 @@ const Checks = () => {
               <Form.Group controlId="formCheckObject">
                 {receipt && (
                   <div style={{ width: '100%' }}>
-                    <p>Preview:</p>
+                    <p className="bold-text">Preview:</p>
                     {receipt.fileType.startsWith("image/") ? (
                       <img className="preview-image" alt="Receipt Preview"
                         src={`data:${receipt.fileType};base64,
@@ -487,13 +485,13 @@ const Checks = () => {
                         }
                       />
                     ) : (
-                      <p>No preview available</p>
+                      <p className="text-danger">No preview available</p>
                     )}
                   </div>
                 )}
               </Form.Group>
               <Form.Group controlId="formCheckObject">
-                <Form.Label>File Receipt:</Form.Label>
+                <Form.Label className="bold-text">File Receipt:</Form.Label>
                 <Form.Control type="file" onChange={handleFileChange} />
               </Form.Group>
             </Form>
@@ -521,7 +519,7 @@ const Checks = () => {
           )}
           {modalTitle === "Edit Receipt" && (
             <div>
-              <Button variant="danger" disabled={receiptId === null || receiptId === ""}
+              <Button variant="danger" disabled={!receiptId}
                   onClick={() => {
                     setDeleteReceiptId(receiptId);
                     console.log("Delete.onClick.setDeleteReceiptId=", deleteReceiptId);
@@ -529,8 +527,8 @@ const Checks = () => {
                   }}>
                 Delete
               </Button>
-              <Button className="ms-2" variant="primary" onClick={receiptId === null || receiptId === "" ?
-                  handleAddReceipt : handleUpdateReceipt}>
+              <Button className="ms-2" variant="primary" 
+                onClick={!receiptId ? handleAddReceipt : handleUpdateReceipt}>
                 Upload
               </Button>
             </div>

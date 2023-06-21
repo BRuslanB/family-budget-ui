@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useCategoryContext } from "../components/shared/CategoryContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
 import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap";
@@ -9,11 +8,10 @@ const Categories = () => {
   const { formError, setFormError } = useFormErrorContext();
   const { category, categoryList, fetchCategory, fetchCategoryList, 
     createCategory, updateCategory, deleteCategory } = useCategoryContext();
-  // const { isRefreshingToken, requestQueue, 
-  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
 
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryDescription, setNewCategoryDescription] = useState("");
   const [deleteCategoryId, setDeleteCategoryId] = useState("");
@@ -25,12 +23,9 @@ const Categories = () => {
   }, []);
 
   useEffect(() => {
-    if (!categoryList) {
+    if (categoryList.length === 0) {
       fetchCategoryList();
     }
-    // if (isRefreshingToken && requestQueue.length > 0) {
-    //   processRequestQueue();
-    // }
   }, [categoryList, fetchCategoryList]);
 
   const handleToggleModal = (title, forceClose = false) => {
@@ -41,6 +36,8 @@ const Categories = () => {
   const handleModalHide = () => {
     setNewCategoryName("");
     setNewCategoryDescription("");
+    setDeleteCategoryId("");
+
     handleToggleModal("", true);
   };
 
@@ -93,7 +90,6 @@ const Categories = () => {
 
     await deleteCategory(deleteCategoryId);
 
-    setDeleteCategoryId("");
     handleToggleModal("");
     fetchCategoryList(); // Updating the list after successful deletion
   };

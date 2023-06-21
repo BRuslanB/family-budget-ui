@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { RefreshContext } from '../components/shared/RefreshContext';
 import { useExpenseContext } from "../components/shared/ExpenseContext";
 import { useCategoryContext } from "../components/shared/CategoryContext";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
@@ -11,11 +10,10 @@ const Expenses = () => {
   const { expense, expenseList, fetchExpense, fetchExpenseList, 
     createExpense, updateExpense, deleteExpense } = useExpenseContext();
   const { categoryList, fetchCategoryList } = useCategoryContext();
-  // const { isRefreshingToken, requestQueue, 
-  //   setIsRefreshingToken, setRequestQueue } = useContext(RefreshContext);
 
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+
   const [newExpenseName, setNewExpenseName] = useState("");
   const [newExpenseDescription, setNewExpenseDescription] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
@@ -28,13 +26,10 @@ const Expenses = () => {
   }, []);
 
   useEffect(() => {
-    if (!expenseList) {
+    if (expenseList.length === 0) {
       fetchExpenseList();
       fetchCategoryList();
     }
-    // if (isRefreshingToken && requestQueue.length > 0) {
-    //   processRequestQueue();
-    // }
   }, [expenseList, fetchExpenseList]);
   
   const handleToggleModal = (title, forceClose = false) => {
@@ -46,6 +41,8 @@ const Expenses = () => {
     setNewExpenseName("");
     setNewExpenseDescription("");
     setSelectedCategoryId("");
+    setDeleteExpenseId("");
+
     handleToggleModal("", true);
   };
 
@@ -105,7 +102,6 @@ const Expenses = () => {
 
     await deleteExpense(deleteExpenseId);
 
-    setDeleteExpenseId("");
     handleToggleModal("");
     fetchExpenseList(); // Updating the list after successful deletion
   };
@@ -210,9 +206,7 @@ const Expenses = () => {
                     value={selectedCategoryId}
                     onChange={(e) => setSelectedCategoryId(e.target.value)}
                   >
-                    {/* {!selectedCategoryId && ( */}
-                      <option value="">-- Select a Category --</option>
-                    {/* )} */}
+                    <option value="">-- Select a Category --</option>
                     {categoryList.map((category) => {
                       if (category.id !== selectedCategoryId) {
                         return (

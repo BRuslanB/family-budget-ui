@@ -24,14 +24,6 @@
     background-color: transparent;
 }
 
-/* .btn.button_style_add:focus {
-    color: firebrick;
-    border-style: none;
-    background-color: transparent;
-    box-shadow: none;
-    outline: none;
-} */
-
 .btn.button_style_add:hover,
 .btn.button_style_add:focus:not(:active) {
     color: rgb(0, 90, 0);
@@ -87,4 +79,8 @@
     height: auto;
     border: none;
     margin-bottom: 20px;
+}
+
+.bold-text {
+    font-weight: bold;
 }

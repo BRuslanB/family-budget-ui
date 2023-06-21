@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useFormErrorContext } from './FormErrorContext';
-import { useRefreshContext } from './RefreshContext';
 import AuthContext from "./AuthContext";
 import createJwtInterceptor from "./jwtInterceptor";
 
@@ -9,24 +8,21 @@ const ActorContext = createContext();
 export const ActorContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
   // console.log("ActorContext1.formError=", formError);
-  const refreshContext = useRefreshContext();
 
   const [actorList, setActorList] = useState([]);
   const [actor, setActor] = useState(null);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
-    fetchActorList();
+    console.log("ActorContext.user", user)
+    console.log("ActorContext.refreshToken", refreshToken)
+    // fetchActorList();
   }, [user, refreshToken]);
-[]
-  useEffect(() => {
-    console.log("ActorContext -> Количество запросов в очереди:", 
-      refreshContext.requestQueue.length, refreshContext.requestQueue);
-  }, [refreshContext.requestQueue]);
 
   const fetchActorList = async () => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         'http://localhost:8001/api/actors'
@@ -42,8 +38,8 @@ export const ActorContextProvider = ({ children }) => {
       console.log("actorList", actorList);
 
     } catch (error) {
-      console.error('Error fetching actor:', error);
       if (error.response && error.response.status === 400) {
+        console.error('Error fetching Actor:', error);
         setFormError(error.response.data.message);
         // console.log("ActorContext2.formError=", formError);
       }
@@ -52,7 +48,8 @@ export const ActorContextProvider = ({ children }) => {
 
   const fetchActor = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.get(
         `http://localhost:8001/api/actors/${id}`
@@ -65,40 +62,69 @@ export const ActorContextProvider = ({ children }) => {
         console.log("Actor fetching:", null);
         setActor(null);
       }
-      console.log("actor", actor);
+      console.log("Actor", actor);
   
     } catch (error) {
-      console.error('Error fetching actor:', error);
       if (error.response && error.response.status === 400) {
+        console.error('Error fetching Actor:', error);
         setFormError(error.response.data.message);
         // console.log("ActorContext3.formError=", formError);
+      }
+      if (error.response && error.response.status === 403) {
+        const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
+        const newAxiosInstance = newInterceptor;
+        try {
+          const response = await newAxiosInstance.get(
+            `http://localhost:8001/api/actors/${id}`
+          );
+          console.log("Actor fetching with refreshed token:", response.data);
+          // alert(response.data.message); // Display the response message
+        } catch (error) {
+          console.error("Error fetching Actor with refreshed token:", error);
+        }
       }
     }
   };
 
   const createActor = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.post(
         "http://localhost:8001/api/actors",
         payload
       );
       console.log("Actor created:", response.data);
-      // alert(response.data.message); // Display the response messagee
-
+      // alert(response.data.message); // Display the response message
+  
     } catch (error) {
-      console.error("Error creating actor:", error);
       if (error.response && error.response.status === 400) {
+        console.error("Error creating Actor:", error);
         setFormError(error.response.data.message);
-        console.log("ActorContext4.formError=", formError);
+        // console.log("ActorContext4.formError=", formError);
+      }
+      if (error.response && error.response.status === 403) {
+        const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
+        const newAxiosInstance = newInterceptor;
+        try {
+          const response = await newAxiosInstance.post(
+            "http://localhost:8001/api/actors",
+            payload
+          );
+          console.log("Actor created with refreshed token:", response.data);
+          // alert(response.data.message); // Display the response message
+        } catch (error) {
+          console.error("Error creating Actor with refreshed token:", error);
+        }
       }
     }
-  };
-
+  };    
+  
   const updateActor = async (payload) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.put(
         "http://localhost:8001/api/actors",
@@ -108,17 +134,32 @@ export const ActorContextProvider = ({ children }) => {
       // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
-      console.error("Error updating actor:", error);
       if (error.response && error.response.status === 400) {
+        console.error("Error updating Actor:", error);
         setFormError(error.response.data.message);
-        console.log("ActorContext5.formError=", formError);
+        // console.log("ActorContext5.formError=", formError);
+      }
+      if (error.response && error.response.status === 403) {
+        const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
+        const newAxiosInstance = newInterceptor;
+        try {
+          const response = await newAxiosInstance.put(
+            "http://localhost:8001/api/actors",
+            payload
+          );
+          console.log("Actor updated with refreshed token:", response.data);
+          // alert(response.data.message); // Display the response message
+        } catch (error) {
+          console.error("Error updating Actor with refreshed token:", error);
+        }
       }
     }
   };
 
   const deleteActor = async (id) => {
     try {
-      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout, refreshContext);
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
       const axiosInstance = interceptor;
       const response = await axiosInstance.delete(
         `http://localhost:8001/api/actors/${id}`
@@ -127,10 +168,23 @@ export const ActorContextProvider = ({ children }) => {
       // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
-      console.error("Error deleting actor:", error);
       if (error.response && error.response.status === 400) {
+        console.error("Error deleting Actor:", error);
         setFormError(error.response.data.message);
-        console.log("ActorContext6.formError=", formError);
+        // console.log("ActorContext6.formError=", formError);
+      }
+      if (error.response && error.response.status === 403) {
+        const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
+        const newAxiosInstance = newInterceptor;
+        try {
+          const response = await newAxiosInstance.delete(
+            `http://localhost:8001/api/actors/${id}`
+          );
+          console.log("Actor deleted:", response.data);
+          // alert(response.data.message); // Display the response messagee
+        } catch (error) {
+          console.error("Error deleting Actor with refreshed token:", error);
+        }
       }
     }
   };

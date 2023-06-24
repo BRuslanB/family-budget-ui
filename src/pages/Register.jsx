@@ -21,6 +21,12 @@ const Register = () => {
     setFormError(""); // Clearing a previous form error when mounting a component
   }, []);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      registerSubmit();
+    }
+  };
+
   const registerSubmit = async () => {
     setFormError(""); // Clear previous form error
 
@@ -58,7 +64,8 @@ const Register = () => {
                     type="email"
                     value={userEmail}
                     onChange={(e) => setUserEmail(e.target.value)}
-                  />
+                    onKeyDown={handleKeyDown} // onKeyDown handler
+                    />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formUserFirstName">
                 <Form.Label>First Name</Form.Label>
@@ -66,6 +73,7 @@ const Register = () => {
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formUserLastName">
@@ -74,6 +82,7 @@ const Register = () => {
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formBirthDay">
@@ -82,6 +91,7 @@ const Register = () => {
                     type="date"
                     value={birthDay}
                     onChange={(e) => setBirthDay(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formPassword">
@@ -90,6 +100,7 @@ const Register = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formRePassword">
@@ -98,6 +109,7 @@ const Register = () => {
                     type="password"
                     value={rePassword}
                     onChange={(e) => setRePassword(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               {formError && <div className="text-danger">{formError}</div>}

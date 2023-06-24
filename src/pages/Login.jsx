@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
 import { useFormErrorContext } from '../components/shared/FormErrorContext';
+import { Col, Container, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import AuthContext from "../components/shared/AuthContext";
@@ -17,19 +17,23 @@ const Login = () => {
     setFormError(""); // Clearing a previous form error when mounting a component
   }, []);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      loginSubmit();
+    }
+  };
+
   const loginSubmit = async () => {
     setFormError(""); // Clear previous form error
 
-    if (userEmail.trim() === "" ||
-        password.trim() === "")
-    {
-        setFormError("Please fill in all the required fields.");
+    if (userEmail.trim() === "" || password.trim() === "") {
+      setFormError("Please fill in all the required fields.");
     } else {
-        const payload = {
-          email: userEmail,
-          password: password
-        };
-        await login(payload);
+      const payload = {
+        email: userEmail,
+        password: password
+      };
+      await login(payload);
     }
   };
   
@@ -46,6 +50,7 @@ const Login = () => {
                     type="email"
                     value={userEmail}
                     onChange={(e) => setUserEmail(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formPassword">
@@ -54,6 +59,7 @@ const Login = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               {formError && <div className="text-danger">{formError}</div>}

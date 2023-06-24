@@ -70,6 +70,7 @@ export const CheckContextProvider = ({ children }) => {
         console.error('Error fetching Check:', error);
         setFormError(error.response.data.message);
         // console.log("CheckContext3.formError=", formError);
+        setCheck(null);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -79,9 +80,11 @@ export const CheckContextProvider = ({ children }) => {
             `http://localhost:8001/api/checks/${id}`
           );
           console.log("Check fetching with refreshed token:", response.data);
+          setCheck(response.data);
           // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error fetching Check with refreshed token:", error);
+          setCheck(null);
         }
       }
     }
@@ -226,8 +229,8 @@ export const CheckContextProvider = ({ children }) => {
   };
 
   return (
-    <CheckContext.Provider value={{ check, checkList, formError, setFormError, 
-      fetchCheck, fetchCheckList, createCheck, updateCheck, updateCheckObject, deleteCheck }}>
+    <CheckContext.Provider value={{ check, setCheck, checkList, fetchCheck,  
+      fetchCheckList, createCheck, updateCheck, updateCheckObject, deleteCheck }}>
       {children}
     </CheckContext.Provider>
   );

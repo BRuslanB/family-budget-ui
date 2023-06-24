@@ -190,8 +190,8 @@ export const ActorContextProvider = ({ children }) => {
   };
 
   return (
-    <ActorContext.Provider value={{ actor, actorList, formError, setFormError, 
-      fetchActor, fetchActorList, createActor, updateActor, deleteActor }}>
+    <ActorContext.Provider value={{ actor, actorList, fetchActor, 
+      fetchActorList, createActor, updateActor, deleteActor }}>
       {children}
     </ActorContext.Provider>
   );

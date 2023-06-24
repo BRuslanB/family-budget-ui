@@ -191,8 +191,8 @@ export const IncomeContextProvider = ({ children }) => {
   };
 
   return (
-    <IncomeContext.Provider value={{ income, incomeList, formError, setFormError, 
-      fetchIncome, fetchIncomeList, createIncome, updateIncome, deleteIncome }}>
+    <IncomeContext.Provider value={{ income, incomeList, fetchIncome,  
+      fetchIncomeList, createIncome, updateIncome, deleteIncome }}>
       {children}
     </IncomeContext.Provider>
   );

@@ -18,6 +18,12 @@ export const UserPassword = () => {
     setFormError(""); // Clearing a previous form error when mounting a component
   }, []);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      passwordSubmit();
+    }
+  };
+
   const passwordSubmit = async () => {
     setFormError(""); // Clear previous form error
 
@@ -49,6 +55,7 @@ export const UserPassword = () => {
                     type="password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formNewPassword">
@@ -57,6 +64,7 @@ export const UserPassword = () => {
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formRePassword">
@@ -65,6 +73,7 @@ export const UserPassword = () => {
                     type="password"
                     value={rePassword}
                     onChange={(e) => setRePassword(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               {formError && <div className="text-danger">{formError}</div>}

@@ -191,8 +191,8 @@ export const ExpenseContextProvider = ({ children }) => {
   };
 
   return (
-    <ExpenseContext.Provider value={{ expense, expenseList, formError, setFormError, 
-      fetchExpense, fetchExpenseList, createExpense, updateExpense, deleteExpense }}>
+    <ExpenseContext.Provider value={{ expense, expenseList, fetchExpense, 
+      fetchExpenseList, createExpense, updateExpense, deleteExpense }}>
       {children}
     </ExpenseContext.Provider>
   );

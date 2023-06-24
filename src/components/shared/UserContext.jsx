@@ -156,8 +156,8 @@ export const UserContextProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ userProfile, formError, setFormError, 
-      fetchUserProfile, updateProfile, updatePassword }}>
+    <UserContext.Provider value={{ userProfile, fetchUserProfile,  
+      updateProfile, updatePassword }}>
       {children}
     </UserContext.Provider>
   );

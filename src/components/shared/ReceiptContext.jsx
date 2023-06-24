@@ -46,7 +46,7 @@ export const ReceiptContextProvider = ({ children }) => {
         setFormError(error.response.data.message);
         setReceipt(null);
         setReceiptId("");
-        // console.log("ReceiptContext3.formError=", formError);
+        console.log("ReceiptContext3.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -156,7 +156,7 @@ export const ReceiptContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error deleting Receipt:", error);
         setFormError(error.response.data.message);
-        // console.log("ReceiptContext6.formError=", formError);
+        console.log("ReceiptContext6.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -175,8 +175,7 @@ export const ReceiptContextProvider = ({ children }) => {
   };
 
   return (
-    <ReceiptContext.Provider value={{ receipt, setReceipt, 
-      receiptId, setReceiptId, formError, setFormError, 
+    <ReceiptContext.Provider value={{ receipt, setReceipt, receiptId, setReceiptId, 
       fetchReceipt, createReceipt, updateReceipt, deleteReceipt }}>
       {children}
     </ReceiptContext.Provider>

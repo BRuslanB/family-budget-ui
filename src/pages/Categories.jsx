@@ -38,6 +38,7 @@ const Categories = () => {
     setNewCategoryDescription("");
     setDeleteCategoryId("");
 
+    setFormError("");
     handleToggleModal("", true);
   };
 
@@ -60,6 +61,7 @@ const Categories = () => {
 
   const handleEditCategory = (id, name, description) => {
     setFormError(""); // Clear previous form error
+    
     setNewCategoryName(name);
     setNewCategoryDescription(description);
     categoryId.current = id;
@@ -153,7 +155,7 @@ const Categories = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newCategoryDescription}
+                    value={newCategoryDescription || ''}
                     onChange={(e) => setNewCategoryDescription(e.target.value)}
                   />
                 </Form.Group>
@@ -178,7 +180,7 @@ const Categories = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newCategoryDescription}
+                    value={newCategoryDescription || ''}
                     onChange={(e) => setNewCategoryDescription(e.target.value)}
                   />
                 </Form.Group>

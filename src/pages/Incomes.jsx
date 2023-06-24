@@ -37,6 +37,7 @@ const Incomes = () => {
     setNewIncomeDescription("");
     setDeleteIncomeId("");
 
+    setFormError("");
     handleToggleModal("", true);
   };
   
@@ -59,6 +60,7 @@ const Incomes = () => {
 
   const handleEditIncome = (id, name, description) => {
     setFormError(""); // Clear previous form error
+    
     setNewIncomeName(name);
     setNewIncomeDescription(description);
     incomeId.current = id;
@@ -152,7 +154,7 @@ const Incomes = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newIncomeDescription}
+                    value={newIncomeDescription || ''}
                     onChange={(e) => setNewIncomeDescription(e.target.value)}
                   />
                 </Form.Group>
@@ -177,7 +179,7 @@ const Incomes = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newIncomeDescription}
+                    value={newIncomeDescription || ''}
                     onChange={(e) => setNewIncomeDescription(e.target.value)}
                   />
                 </Form.Group>

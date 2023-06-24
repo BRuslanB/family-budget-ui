@@ -39,6 +39,12 @@ export const UserProfile = () => {
     }
   }, [userProfile, fetchUserProfile]);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      profileSubmit();
+    }
+  };
+
   const profileSubmit = async () => {
     setFormError(""); // Clear previous form error
 
@@ -79,6 +85,7 @@ export const UserProfile = () => {
                     type="text"
                     value={newFirstName}
                     onChange={(e) => setNewFirstName(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formUserLastName">
@@ -87,6 +94,7 @@ export const UserProfile = () => {
                     type="text"
                     value={newLastName}
                     onChange={(e) => setNewLastName(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formBirthDay">
@@ -95,6 +103,7 @@ export const UserProfile = () => {
                     type="date"
                     value={newBirthDay}
                     onChange={(e) => setNewBirthDay(e.target.value)}
+                    onKeyDown={handleKeyDown} // onKeyDown handler
                   />
               </Form.Group>
               <Form.Group className="mb-2" controlId="formUserRoles">

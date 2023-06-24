@@ -10,7 +10,7 @@ import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap"
 const Checks = () => {
 
   const { formError, setFormError } = useFormErrorContext();
-  const { check, checkList, fetchCheck, fetchCheckList, 
+  const { check, setCheck, checkList, fetchCheck, fetchCheckList, 
     createCheck, updateCheck, updateCheckObject, deleteCheck } = useCheckContext();
   const { incomeList, fetchIncomeList } = useIncomeContext();
   const { expenseList, fetchExpenseList } = useExpenseContext();
@@ -33,6 +33,7 @@ const Checks = () => {
   const [deleteReceiptId, setDeleteReceiptId] = useState(null);
   
   const checkId = useRef("");
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     setFormError(""); // Clear previous form error on component mount
@@ -48,17 +49,30 @@ const Checks = () => {
   }, [checkList, fetchCheckList]);
 
   useEffect(() => {
+    if (check) {
+      if (check.object) {
+        // Delete Receipt if object is not null
+        deleteReceipt(check.object);
+      }
+      // Clearing the value of Сheck
+      setCheck(null);
+    }
+  }, [check]);
+
+  useEffect(() => {
     console.log("Check.useEffect.receipt", receipt);
     console.log("Check.useEffect.receiptId=", receiptId);
     console.log("Check.useEffect.deleteReceiptId=", deleteReceiptId);
 
-    if (receiptId) {
+    if (receiptId && !deleteReceiptId) {
       handleFetchReceipt();
+    } else {
+      setReceipt(null);  
     }
 
     const updateCheckAndFetchList = async () => {
       if ((receiptId && receiptFileType && receiptFileContent.length !== 0) ||
-          (!receiptId && deleteReceiptId)) //&& (receipt?.id == deleteReceiptId)) 
+          (!receiptId && deleteReceiptId))  
       {
         await handleUpdateCheckObject();
         await fetchCheckList();
@@ -87,7 +101,8 @@ const Checks = () => {
     setReceiptFileType("");
     setReceiptFileContent([]);
     setDeleteReceiptId("");
-
+  
+    setFormError("");
     handleToggleModal("", true);
   };
 
@@ -116,6 +131,7 @@ const Checks = () => {
 
   const handleEditCheck = (id, val, date, note, income, expense, actor) => {
     setFormError(""); // Clear previous form error
+
     setNewCheckVal(val);
     setNewCheckDate(date);
     setNewCheckNote(note);
@@ -152,14 +168,17 @@ const Checks = () => {
 
   const handleDeleteCheck = async () => {
     setFormError(""); // Clear previous form error
-
-    await deleteCheck(deleteCheckId);
-
+  
+    await fetchCheck(deleteCheckId); // Получаем результат fetchCheck
+    await deleteCheck(deleteCheckId); // Delete Check
+    
     handleToggleModal("");
     fetchCheckList(); // Updating the list after successful deletion Check
   };
 
   const handleFetchReceipt = async () => {
+    setFormError(""); // Clear previous form error
+
     await fetchReceipt(receiptId);
   };
 
@@ -176,7 +195,6 @@ const Checks = () => {
       };
       await createReceipt(payload); // Get new receiptId
 
-      handleToggleModal("");
     }
   };
 
@@ -203,7 +221,6 @@ const Checks = () => {
       };
       await updateReceipt(payload);
 
-      handleToggleModal("");
     }
   };
 
@@ -213,17 +230,21 @@ const Checks = () => {
       object: receiptId  ? receiptId : null,
     };
     await updateCheckObject(payload);
-  };
+
+    fileInputRef.current.value = null; // Reset file field element value
+    setReceiptFileType(""); // Reset file type value
+    setReceiptFileContent([]); // Reset file content value
+};
 
   const handleDeleteReceipt = async () => {
     await deleteReceipt(receiptId);
 
     setReceiptId(""); // Clear the current value in receiptId
-    handleToggleModal("");
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -354,7 +375,7 @@ const Checks = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newCheckNote}
+                    value={newCheckNote || ''}
                     onChange={(e) => setNewCheckNote(e.target.value)}
                   />
                 </Form.Group>
@@ -458,7 +479,7 @@ const Checks = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newCheckNote}
+                    value={newCheckNote || ''}
                     onChange={(e) => setNewCheckNote(e.target.value)}
                   />
                 </Form.Group>
@@ -492,7 +513,7 @@ const Checks = () => {
               </Form.Group>
               <Form.Group controlId="formCheckObject">
                 <Form.Label className="bold-text">File Receipt:</Form.Label>
-                <Form.Control type="file" onChange={handleFileChange} />
+                <Form.Control type="file" onChange={handleFileChange} ref={fileInputRef} />
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -527,7 +548,7 @@ const Checks = () => {
                   }}>
                 Delete
               </Button>
-              <Button className="ms-2" variant="primary" 
+              <Button className="ms-2" variant="primary"
                 onClick={!receiptId ? handleAddReceipt : handleUpdateReceipt}>
                 Upload
               </Button>

@@ -39,6 +39,7 @@ const Actors = () => {
     setNewActorDescription("");
     setDeleteActorId("");
 
+    setFormError("");
     handleToggleModal("", true);
   };
   
@@ -61,6 +62,7 @@ const Actors = () => {
 
   const handleEditActor = (id, name, description) => {
     setFormError(""); // Clear previous form error
+    
     setNewActorName(name);
     setNewActorDescription(description);
     actorId.current = id;
@@ -154,7 +156,7 @@ const Actors = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newActorDescription}
+                    value={newActorDescription || ''}
                     onChange={(e) => setNewActorDescription(e.target.value)}
                   />
                 </Form.Group>
@@ -179,7 +181,7 @@ const Actors = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newActorDescription}
+                    value={newActorDescription || ''}
                     onChange={(e) => setNewActorDescription(e.target.value)}
                   />
                 </Form.Group>

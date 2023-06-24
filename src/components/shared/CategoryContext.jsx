@@ -190,8 +190,8 @@ export const CategoryContextProvider = ({ children }) => {
   };
 
   return (
-    <CategoryContext.Provider value={{ category, categoryList, formError, setFormError, 
-      fetchCategory, fetchCategoryList, createCategory, updateCategory, deleteCategory }}>
+    <CategoryContext.Provider value={{ category, categoryList, fetchCategory, 
+      fetchCategoryList, createCategory, updateCategory, deleteCategory }}>
       {children}
     </CategoryContext.Provider>
   );

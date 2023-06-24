@@ -43,6 +43,7 @@ const Expenses = () => {
     setSelectedCategoryId("");
     setDeleteExpenseId("");
 
+    setFormError("");
     handleToggleModal("", true);
   };
 
@@ -66,6 +67,7 @@ const Expenses = () => {
 
   const handleEditExpense = (id, name, description, category) => {
     setFormError(""); // Clear previous form error
+    
     setNewExpenseName(name);
     setNewExpenseDescription(description);
     if (category) {
@@ -180,7 +182,7 @@ const Expenses = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newExpenseDescription}
+                    value={newExpenseDescription || ''}
                     onChange={(e) => setNewExpenseDescription(e.target.value)}
                   />
                 </Form.Group>
@@ -229,7 +231,7 @@ const Expenses = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={newExpenseDescription}
+                    value={newExpenseDescription || ''}
                     onChange={(e) => setNewExpenseDescription(e.target.value)}
                   />
                 </Form.Group>

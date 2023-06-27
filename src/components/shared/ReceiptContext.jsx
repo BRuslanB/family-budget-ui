@@ -8,15 +8,14 @@ const ReceiptContext = createContext();
 export const ReceiptContextProvider = ({ children }) => {
   
   const { formError, setFormError } = useFormErrorContext();
-  // console.log("ReceiptContext1.formError=", formError);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   const [receipt, setReceipt] = useState(null);
   const [receiptId, setReceiptId] = useState("");
 
   useEffect(() => { 
-    console.log("ReceiptContext.user", user)
-    console.log("ReceiptContext.refreshToken", refreshToken)
+    // console.log("ReceiptContext.user", user)
+    // console.log("ReceiptContext.refreshToken", refreshToken)
   }, [user, refreshToken]);
 
   const fetchReceipt = async (id) => {
@@ -85,7 +84,6 @@ export const ReceiptContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error creating Receipt:", error);
         setFormError(error.response.data.message);
-        // console.log("ReceiptContext4.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -122,7 +120,6 @@ export const ReceiptContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error updating Receipt:", error);
         setFormError(error.response.data.message);
-        // console.log("ReceiptContext5.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);

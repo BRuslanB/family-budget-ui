@@ -27,6 +27,13 @@ const Incomes = () => {
     }
   }, [incomeList, fetchIncomeList]);
 
+  useEffect(() => {
+    console.log("Incomes.showModal", showModal);
+    if (!showModal) {
+      handleModalHide();
+    };
+  }, [showModal]);
+
   const handleToggleModal = (title, forceClose = false) => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
     setModalTitle(title);
@@ -54,6 +61,7 @@ const Incomes = () => {
       await createIncome(payload);
 
       handleToggleModal("");
+
       fetchIncomeList(); // Updating the list after successful addition
     }
   };
@@ -82,6 +90,7 @@ const Incomes = () => {
 
       incomeId.current = "";
       handleToggleModal("");
+
       fetchIncomeList(); // Updating the list after successful editing
     }
   };
@@ -92,6 +101,7 @@ const Incomes = () => {
     await deleteIncome(deleteIncomeId);
 
     handleToggleModal("");
+    
     fetchIncomeList(); // Updating the list after successful deletion
   };
 
@@ -133,6 +143,7 @@ const Incomes = () => {
           ))}
         </Row>
       </Container>
+
       <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>

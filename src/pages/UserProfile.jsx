@@ -31,7 +31,6 @@ export const UserProfile = () => {
       fetchUserProfile();
     }
     // Get User profile fields
-    console.log("UserProfile.userProfile", userProfile)
     if (userProfile) {
       setNewFirstName(userProfile.firstName);
       setNewLastName(userProfile.lastName);

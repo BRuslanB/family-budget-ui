@@ -11,16 +11,14 @@ const UserContext = createContext();
 export const UserContextProvider = ({ children }) => {
 
   const { formError, setFormError } = useFormErrorContext();
-  // console.log("UserContext1.formError=", formError);
 
   const [userProfile, setUserProfile] = useState(null);
   const { user, refreshToken, setUser, setRefreshToken, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => { 
-    console.log("UserContext.user", user)
-    console.log("UserContext.refreshToken", refreshToken)
-    // fetchUserProfile();
+    // console.log("UserContext.user", user)
+    // console.log("UserContext.refreshToken", refreshToken)
   }, [user, refreshToken]);
 
   const fetchUserProfile = async () => {
@@ -45,7 +43,6 @@ export const UserContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error('Error fetching User Profile:', error);
         setFormError(error.response.data.message);
-        // console.log("UserContext2.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -100,7 +97,6 @@ export const UserContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error saving User Profile:", error);
         setFormError(error.response.data.message);
-        // console.log("UserContext3.formError=", formError);
       } 
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -136,7 +132,6 @@ export const UserContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error updating User Password:", error);
         setFormError(error.response.data.message);
-        // console.log("UserContext4.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);

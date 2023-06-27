@@ -28,6 +28,12 @@ const Categories = () => {
     }
   }, [categoryList, fetchCategoryList]);
 
+  useEffect(() => {
+    if (!showModal) {
+      handleModalHide();
+    };
+  }, [showModal]);
+
   const handleToggleModal = (title, forceClose = false) => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
     setModalTitle(title);
@@ -134,6 +140,7 @@ const Categories = () => {
           ))}
         </Row>
       </Container>
+
       <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>

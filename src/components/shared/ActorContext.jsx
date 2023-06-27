@@ -7,16 +7,14 @@ const ActorContext = createContext();
 
 export const ActorContextProvider = ({ children }) => {
   const { formError, setFormError } = useFormErrorContext();
-  // console.log("ActorContext1.formError=", formError);
 
   const [actorList, setActorList] = useState([]);
   const [actor, setActor] = useState(null);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log("ActorContext.user", user)
-    console.log("ActorContext.refreshToken", refreshToken)
-    // fetchActorList();
+    // console.log("ActorContext.user", user)
+    // console.log("ActorContext.refreshToken", refreshToken)
   }, [user, refreshToken]);
 
   const fetchActorList = async () => {
@@ -41,7 +39,6 @@ export const ActorContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error('Error fetching Actor:', error);
         setFormError(error.response.data.message);
-        // console.log("ActorContext2.formError=", formError);
       }
     }
   };
@@ -62,13 +59,12 @@ export const ActorContextProvider = ({ children }) => {
         console.log("Actor fetching:", null);
         setActor(null);
       }
-      console.log("Actor", actor);
+      // console.log("Actor", actor);
   
     } catch (error) {
       if (error.response && error.response.status === 400) {
         console.error('Error fetching Actor:', error);
         setFormError(error.response.data.message);
-        // console.log("ActorContext3.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -102,7 +98,6 @@ export const ActorContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error creating Actor:", error);
         setFormError(error.response.data.message);
-        // console.log("ActorContext4.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -137,7 +132,6 @@ export const ActorContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error updating Actor:", error);
         setFormError(error.response.data.message);
-        // console.log("ActorContext5.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -171,7 +165,6 @@ export const ActorContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error deleting Actor:", error);
         setFormError(error.response.data.message);
-        // console.log("ActorContext6.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);

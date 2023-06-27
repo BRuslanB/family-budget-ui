@@ -8,16 +8,14 @@ const IncomeContext = createContext();
 export const IncomeContextProvider = ({ children }) => {
   
   const { formError, setFormError } = useFormErrorContext();
-  // console.log("IncomeContext1.formError=", formError);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   const [incomeList, setIncomeList] = useState([]);
   const [income, setIncome] = useState(null);
 
   useEffect(() => {
-    console.log("IncomeContext.user", user)
-    console.log("IncomeContext.refreshToken", refreshToken)
-    // fetchIncomeList();
+    // console.log("IncomeContext.user", user)
+    // console.log("IncomeContext.refreshToken", refreshToken)
   }, [user, refreshToken]);
 
   const fetchIncomeList = async () => {
@@ -69,7 +67,6 @@ export const IncomeContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error('Error fetching Income:', error);
         setFormError(error.response.data.message);
-        // console.log("IncomeContext3.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -103,7 +100,6 @@ export const IncomeContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error creating Income:", error);
         setFormError(error.response.data.message);
-        // console.log("IncomeContext4.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -138,7 +134,6 @@ export const IncomeContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error updating Income:", error);
         setFormError(error.response.data.message);
-        // console.log("IncomeContext5.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -172,7 +167,6 @@ export const IncomeContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error deleting Income:", error);
         setFormError(error.response.data.message);
-        // console.log("IncomeContext6.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);

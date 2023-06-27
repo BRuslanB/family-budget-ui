@@ -9,8 +9,8 @@ const Layout = ({ children }) => {
   const { user, refreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => { 
-    console.log("Layout.user", user)
-    console.log("Layout.refreshToken", refreshToken)
+    // console.log("Layout.user", user)
+    // console.log("Layout.refreshToken", refreshToken)
   }, [user, refreshToken]);
 
   return (

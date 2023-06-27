@@ -10,7 +10,8 @@ import { Button, Container, Form, Modal, Row, Col, Card } from "react-bootstrap"
 const Checks = () => {
 
   const { formError, setFormError } = useFormErrorContext();
-  const { check, setCheck, checkList, fetchCheck, fetchCheckList, 
+  const { check, setCheck, checkList, setCheckList, 
+    fetchCheck, fetchCheckList, fetchCheckListDates,
     createCheck, updateCheck, updateCheckObject, deleteCheck } = useCheckContext();
   const { incomeList, fetchIncomeList } = useIncomeContext();
   const { expenseList, fetchExpenseList } = useExpenseContext();
@@ -20,6 +21,9 @@ const Checks = () => {
   
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const [newCheckVal, setNewCheckVal] = useState(null);
   const [newCheckDate, setNewCheckDate] = useState("");
@@ -37,16 +41,30 @@ const Checks = () => {
 
   useEffect(() => {
     setFormError(""); // Clear previous form error on component mount
+    setCheckList([]); // Clear checkList values
   }, []);
 
   useEffect(() => {
+    if (!dateFrom) {
+      setDateFrom(localStorage.getItem('date_from'));
+    }
+    if (!dateTo) {
+      setDateTo(localStorage.getItem('date_to'));
+    }
+  }, [dateFrom, dateTo]);
+
+  useEffect(() => {
     if (checkList.length === 0) {
-      fetchCheckList();
+      if (dateFrom && dateTo) {
+        fetchCheckListDates(dateFrom, dateTo)
+      } else {
+        fetchCheckList();
+      }
       fetchIncomeList();
       fetchExpenseList();
       fetchActorList();
     }
-  }, [checkList, fetchCheckList]);
+  }, [checkList, fetchCheckList, fetchCheckListDates]);
 
   useEffect(() => {
     if (check) {
@@ -60,11 +78,8 @@ const Checks = () => {
   }, [check]);
 
   useEffect(() => {
-    console.log("Check.useEffect.receipt", receipt);
-    console.log("Check.useEffect.receiptId=", receiptId);
-    console.log("Check.useEffect.deleteReceiptId=", deleteReceiptId);
-
-    if (receiptId && !deleteReceiptId) {
+    if ((receiptId && !deleteReceiptId) || 
+        (receiptId && receiptFileType && receiptFileContent.length !== 0)) {
       handleFetchReceipt();
     } else {
       setReceipt(null);  
@@ -75,12 +90,22 @@ const Checks = () => {
           (!receiptId && deleteReceiptId))  
       {
         await handleUpdateCheckObject();
-        await fetchCheckList();
+        if (dateFrom && dateTo) {
+          await fetchCheckListDates(dateFrom, dateTo)
+        } else {
+          await fetchCheckList();
+        }
       }
     };
     updateCheckAndFetchList(); // Calling an async function immediately
 
   }, [receiptId, deleteReceiptId]);
+
+  useEffect(() => {
+    if (!showModal) {
+      handleModalHide();
+    };
+  }, [showModal]);
 
   const handleToggleModal = (title, forceClose = false) => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
@@ -106,11 +131,33 @@ const Checks = () => {
     handleToggleModal("", true);
   };
 
-  const handleAddCheck = async () => {
+  const applyParam = () => {
+    if (!dateFrom || !dateTo) {
+        alert("Both dates must be selected!");
+        return;
+    }
+    // Save param in localStorage
+    localStorage.setItem('date_from', dateFrom);
+    localStorage.setItem('date_to', dateTo);
+
+    fetchCheckListDates(dateFrom, dateTo); // Updating the list after apply param
+  }
+
+  const resetParam = () => {
+    setDateFrom("");
+    setDateTo("");
+
+    // Clear param from localStorage
+    delete localStorage.date_from; 
+    delete localStorage.date_to;
+
+    fetchCheckList(); // Updating the list after reset param
+  }
+
+  const handleAddCheckExpense = async () => {
     setFormError(""); // Clear previous form error
 
-    if (!newCheckVal || newCheckDate.trim() === "" || !selectedActorId || 
-      (!selectedIncomeId && !selectedExpenseId)) {
+    if (!newCheckVal || newCheckDate.trim() === "" || !selectedActorId || !selectedExpenseId) {
       setFormError("Please fill in all the required fields.");
     } else {
       const payload = {
@@ -118,14 +165,48 @@ const Checks = () => {
         date: newCheckDate,
         note: newCheckNote,
         object: null,
-        income: selectedIncomeId ? { id: selectedIncomeId } : null,
-        expense: selectedExpenseId ? { id: selectedExpenseId } : null,
-        actor: selectedActorId ? { id: selectedActorId } : null
+        income: null,
+        expense: { id: selectedExpenseId },
+        actor: { id: selectedActorId }
       };
       await createCheck(payload);
 
       handleToggleModal("");
-      fetchCheckList(); // Updating the list after successful addition Check
+
+      // Updating the list after successful addition Check
+      if (dateFrom && dateTo) {
+        fetchCheckListDates(dateFrom, dateTo)
+      } else {
+        fetchCheckList(); 
+      }
+    }
+  };
+
+  const handleAddCheckIncome = async () => {
+    setFormError(""); // Clear previous form error
+
+    if (!newCheckVal || newCheckDate.trim() === "" || !selectedActorId || !selectedIncomeId) {
+      setFormError("Please fill in all the required fields.");
+    } else {
+      const payload = {
+        val: newCheckVal,
+        date: newCheckDate,
+        note: newCheckNote,
+        object: null,
+        income: { id: selectedIncomeId },
+        expense: null,
+        actor: { id: selectedActorId }
+      };
+      await createCheck(payload);
+
+      handleToggleModal("");
+
+      // Updating the list after successful addition Check
+      if (dateFrom && dateTo) {
+        fetchCheckListDates(dateFrom, dateTo)
+      } else {
+        fetchCheckList(); 
+      }
     }
   };
 
@@ -156,24 +237,36 @@ const Checks = () => {
         note: newCheckNote,
         income: selectedIncomeId ? { id: selectedIncomeId } : null,
         expense: selectedExpenseId ? { id: selectedExpenseId } : null,
-        actor: selectedActorId ? { id: selectedActorId } : null
+        actor: { id: selectedActorId }
       };
       await updateCheck(payload);
 
       checkId.current = "";
       handleToggleModal("");
-      fetchCheckList(); // Updating the list after successful editing Check
+
+      // Updating the list after successful editing Check
+      if (dateFrom && dateTo) {
+        fetchCheckListDates(dateFrom, dateTo)
+      } else {
+        fetchCheckList(); 
+      }
     }
   };
 
   const handleDeleteCheck = async () => {
     setFormError(""); // Clear previous form error
   
-    await fetchCheck(deleteCheckId); // Получаем результат fetchCheck
+    await fetchCheck(deleteCheckId); // Getting the result of fetchCheck
     await deleteCheck(deleteCheckId); // Delete Check
     
     handleToggleModal("");
-    fetchCheckList(); // Updating the list after successful deletion Check
+
+    // Updating the list after successful deletion Check
+    if (dateFrom && dateTo) {
+      fetchCheckListDates(dateFrom, dateTo)
+    } else {
+      fetchCheckList(); 
+    }
   };
 
   const handleFetchReceipt = async () => {
@@ -190,7 +283,6 @@ const Checks = () => {
     } else {
       const payload = {
         fileType: receiptFileType,
-        // fileContent: receiptFileContent
         fileContent: new String(receiptFileContent) // Convert to string
       };
       await createReceipt(payload); // Get new receiptId
@@ -216,7 +308,6 @@ const Checks = () => {
       const payload = {
         id: receiptId,
         fileType: receiptFileType,
-        // fileContent: receiptFileContent
         fileContent: new String(receiptFileContent) // Convert to string
       };
       await updateReceipt(payload);
@@ -258,17 +349,64 @@ const Checks = () => {
   return (
     <>
       <Container className="mt-2">
-        <Button className="button_style_add" onClick={() => handleToggleModal("Add Check")}>
-          +Add Check
-        </Button>
-        <Row xs={1} md={2} className="g-4">
+        {/* Block parameters */}
+        <Row className="g-4">
+          <Col xs={6} md={2}>
+            <Form.Label className="fw-bold">DATE FROM</Form.Label>
+          </Col>
+          <Col xs={6} md={2}>
+            <Form.Label className="fw-bold">DATE TO</Form.Label>
+          </Col>
+        </Row>
+        <Row className="g-4">
+          <Col xs={6} md={2}>
+            <Form.Control
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+            />
+          </Col>
+          <Col xs={6} md={2}>
+            <Form.Control
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+            />
+          </Col>
+          <Col xs={6} md={4}>
+            <Button className="button_style me-2" onClick={applyParam}>
+              APPLY
+            </Button>
+            <Button variant="primary" onClick={resetParam}>
+              RESET
+            </Button>
+          </Col>
+        </Row>
+
+        {/* Buttons Add Check */}
+        <Row className="g-4 mt-2">
+          <Col xs={6} md={12}>
+            <Button className="button_style_add_red" 
+              onClick={() => handleToggleModal("Add Check Expense")}>
+              +Add Check Expense
+            </Button>
+            <Button className="button_style_add" 
+              onClick={() => handleToggleModal("Add Check Income")}>
+              +Add Check Income
+            </Button>
+          </Col>
+        </Row>
+
+        {/* Cards Checks */}
+        <Row xs={2} sm={3} md={4} className="g-4">
           {checkList.map((item) => (
             <Col key={item.id}>
               <Card>
                 <Card.Body>
-                  <Card.Title>Suma:{item.val}  Date:{item.date}</Card.Title>
-                  <Card.Text>Income: {item.income ? item.income.name : "N/A"}</Card.Text>
-                  <Card.Text>Expense: {item.expense ? item.expense.name : "N/A"}</Card.Text>
+                  <Card.Title>Suma: {item.expense ? "-" : ""}{item.val} &nbsp; 
+                    Date: {item.date}</Card.Title>
+                  {item.expense && <Card.Text>Expense: {item.expense.name}</Card.Text>}
+                  {item.income && <Card.Text>Income: {item.income.name}</Card.Text>}
                   <Card.Text>Actor: {item.actor ? item.actor.name : "N/A"}</Card.Text>
                   <Card.Text>Note: {item.note}</Card.Text>
                   <Card.Footer>
@@ -304,14 +442,76 @@ const Checks = () => {
           ))}
         </Row>
       </Container>
+
       <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
-        {modalTitle === "Add Check" && (
+        {modalTitle === "Add Check Expense" && (
           <Modal.Body>
             {[ // Content wrapped in an array
-              <Form key="add-check-form">
+              <Form key="add-check-expense-form">
+                <Form.Group controlId="formCheckVal">
+                  <Form.Label>Value</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={newCheckVal}
+                    onChange={(e) => setNewCheckVal(e.target.value)}
+                  />
+                </Form.Group>
+                <Form.Group controlId="formCheckDate">
+                  <Form.Label>Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={newCheckDate}
+                    onChange={(e) => setNewCheckDate(e.target.value)}
+                  />
+                </Form.Group>
+                <Form.Group controlId="formCheckExpense">
+                  <Form.Label>Expense</Form.Label>
+                  <Form.Select
+                    value={selectedExpenseId}
+                    onChange={(e) => setSelectedExpenseId(e.target.value)}
+                  >
+                    <option value="">-- Select a Expense --</option>
+                    {expenseList.map((expense) => (
+                      <option key={expense.id} value={expense.id}>
+                        {expense.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="formCheckActor">
+                  <Form.Label>Actor</Form.Label>
+                  <Form.Select
+                    value={selectedActorId}
+                    onChange={(e) => setSelectedActorId(e.target.value)}
+                  >
+                    <option value="">-- Select a Actor --</option>
+                    {actorList.map((actor) => (
+                      <option key={actor.id} value={actor.id}>
+                        {actor.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="formCheckNote">
+                  <Form.Label>Note</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={newCheckNote || ''}
+                    onChange={(e) => setNewCheckNote(e.target.value)}
+                  />
+                </Form.Group>
+              </Form>
+            ]}
+          </Modal.Body>
+        )}
+        {modalTitle === "Add Check Income" && (
+          <Modal.Body>
+            {[ // Content wrapped in an array
+              <Form key="add-check-income-form">
                 <Form.Group controlId="formCheckVal">
                   <Form.Label>Value</Form.Label>
                   <Form.Control
@@ -338,20 +538,6 @@ const Checks = () => {
                     {incomeList.map((income) => (
                       <option key={income.id} value={income.id}>
                         {income.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-                <Form.Group controlId="formCheckExpense">
-                  <Form.Label>Expense</Form.Label>
-                  <Form.Select
-                    value={selectedExpenseId}
-                    onChange={(e) => setSelectedExpenseId(e.target.value)}
-                  >
-                    <option value="">-- Select a Expense --</option>
-                    {expenseList.map((expense) => (
-                      <option key={expense.id} value={expense.id}>
-                        {expense.name}
                       </option>
                     ))}
                   </Form.Select>
@@ -403,50 +589,64 @@ const Checks = () => {
                     onChange={(e) => setNewCheckDate(e.target.value)}
                   />
                 </Form.Group>
-                <Form.Group controlId="formCheckIncome">
-                  <Form.Label>Income</Form.Label>
-                  <Form.Select
-                    value={selectedIncomeId}
-                    onChange={(e) => setSelectedIncomeId(e.target.value)}
-                  >
-                    <option value="">-- Select a Income --</option>
-                    {incomeList.map((income) => {
-                      if (income.id !== selectedIncomeId) {
-                        return (
-                          <option key={income.id} value={income.id}>
-                            {income.name}
-                          </option>
-                        )
-                      } else {
-                        return (
-                          <option key={income.id} value={income.id} defaultChecked>
-                            {income.name}
-                          </option>
-                        )
-                      }
-                    })}
-                  </Form.Select>
-                </Form.Group>
                 <Form.Group controlId="formCheckExpense">
                   <Form.Label>Expense</Form.Label>
                   <Form.Select
                     value={selectedExpenseId}
-                    onChange={(e) => setSelectedExpenseId(e.target.value)}
+                    onChange={(e) => {
+                      const expenseId = e.target.value;
+                      setSelectedExpenseId(expenseId);
+                      // If expenseId is selected, clearing selectedIncomeId
+                      if (expenseId !== "") {
+                        setSelectedIncomeId("");
+                      }
+                    }}
                   >
-                    <option value="">-- Select a Expense --</option>
+                    <option value="">-- Select an Expense --</option>
                     {expenseList.map((expense) => {
                       if (expense.id !== selectedExpenseId) {
                         return (
                           <option key={expense.id} value={expense.id}>
                             {expense.name}
                           </option>
-                        )
+                        );
                       } else {
                         return (
                           <option key={expense.id} value={expense.id} defaultChecked>
                             {expense.name}
                           </option>
-                        )
+                        );
+                      }
+                    })}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="formCheckIncome">
+                  <Form.Label>Income</Form.Label>
+                  <Form.Select
+                    value={selectedIncomeId}
+                    onChange={(e) => {
+                      const incomeId = e.target.value;
+                      setSelectedIncomeId(incomeId);
+                      // If incomeId is selected, clearing selectedExpenseId
+                      if (incomeId !== "") {
+                        setSelectedExpenseId("");
+                      }
+                    }}
+                  >
+                    <option value="">-- Select an Income --</option>
+                    {incomeList.map((income) => {
+                      if (income.id !== selectedIncomeId) {
+                        return (
+                          <option key={income.id} value={income.id}>
+                            {income.name}
+                          </option>
+                        );
+                      } else {
+                        return (
+                          <option key={income.id} value={income.id} defaultChecked>
+                            {income.name}
+                          </option>
+                        );
                       }
                     })}
                   </Form.Select>
@@ -523,8 +723,13 @@ const Checks = () => {
           <Button variant="secondary" onClick={handleModalHide}>
             Cancel
           </Button>
-          {modalTitle === "Add Check" && (
-            <Button variant="primary" onClick={handleAddCheck}>
+          {modalTitle === "Add Check Expense" && (
+            <Button variant="primary" onClick={handleAddCheckExpense}>
+              Add
+            </Button>
+          )}
+          {modalTitle === "Add Check Income" && (
+            <Button variant="primary" onClick={handleAddCheckIncome}>
               Add
             </Button>
           )}
@@ -543,7 +748,6 @@ const Checks = () => {
               <Button variant="danger" disabled={!receiptId}
                   onClick={() => {
                     setDeleteReceiptId(receiptId);
-                    console.log("Delete.onClick.setDeleteReceiptId=", deleteReceiptId);
                     handleDeleteReceipt();
                   }}>
                 Delete

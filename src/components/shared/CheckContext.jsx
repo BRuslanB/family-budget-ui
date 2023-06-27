@@ -8,16 +8,14 @@ const CheckContext = createContext();
 export const CheckContextProvider = ({ children }) => {
 
   const { formError, setFormError } = useFormErrorContext();
-  // console.log("CheckContext1.formError=", formError);
-
+ 
   const [checkList, setCheckList] = useState([]);
   const [check, setCheck] = useState(null);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log("CheckContext.user", user)
-    console.log("CheckContext.refreshToken", refreshToken)
-    // fetchCheckList();
+    // console.log("CheckContext.user", user)
+    // console.log("CheckContext.refreshToken", refreshToken)
   }, [user, refreshToken]);
 
   const fetchCheckList = async () => {
@@ -42,7 +40,32 @@ export const CheckContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error('Error fetching Check:', error);
         setFormError(error.response.data.message);
-        // console.log("CheckContext2.formError=", formError);
+      }
+    }
+  };
+
+  const fetchCheckListDates = async (date1, date2) => {
+    try {
+      const interceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, 
+        setRefreshToken, logout);
+      const axiosInstance = interceptor;
+      const response = await axiosInstance.get(
+        `http://localhost:8001/api/checks/dates/${date1}/${date2}`
+      );
+
+      if (response.data !== undefined) {
+        console.log("CheckListDates fetching:", response.data);
+        setCheckList(response.data);
+      } else {
+        console.log("CheckListDates fetching:", null);
+        setCheckList([]);
+      }
+      console.log("checkList", checkList);
+
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        console.error('Error fetching Check dates:', error);
+        setFormError(error.response.data.message);
       }
     }
   };
@@ -69,7 +92,6 @@ export const CheckContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error('Error fetching Check:', error);
         setFormError(error.response.data.message);
-        // console.log("CheckContext3.formError=", formError);
         setCheck(null);
       }
       if (error.response && error.response.status === 403) {
@@ -106,7 +128,6 @@ export const CheckContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error creating Check:", error);
         setFormError(error.response.data.message);
-        // console.log("CheckContext4.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -141,7 +162,6 @@ export const CheckContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error updating Check:", error);
         setFormError(error.response.data.message);
-        // console.log("CheckContext5.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -176,7 +196,6 @@ export const CheckContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error updating Check Object:", error);
         setFormError(error.response.data.message);
-        // console.log("CheckContext5.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -210,7 +229,6 @@ export const CheckContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error deleting Check:", error);
         setFormError(error.response.data.message);
-        // console.log("CheckContext6.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -229,8 +247,9 @@ export const CheckContextProvider = ({ children }) => {
   };
 
   return (
-    <CheckContext.Provider value={{ check, setCheck, checkList, fetchCheck,  
-      fetchCheckList, createCheck, updateCheck, updateCheckObject, deleteCheck }}>
+    <CheckContext.Provider value={{ check, setCheck, checkList, setCheckList, 
+      fetchCheck, fetchCheckList, fetchCheckListDates, 
+      createCheck, updateCheck, updateCheckObject, deleteCheck }}>
       {children}
     </CheckContext.Provider>
   );

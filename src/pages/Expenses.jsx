@@ -31,7 +31,13 @@ const Expenses = () => {
       fetchCategoryList();
     }
   }, [expenseList, fetchExpenseList]);
-  
+
+  useEffect(() => {
+    if (!showModal) {
+      handleModalHide();
+    };
+  }, [showModal]);
+
   const handleToggleModal = (title, forceClose = false) => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
     setModalTitle(title);
@@ -147,6 +153,7 @@ const Expenses = () => {
           ))}
         </Row>
       </Container>
+
       <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>

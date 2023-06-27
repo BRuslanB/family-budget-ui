@@ -23,11 +23,16 @@ const Actors = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Actor.actorList", actorList);
     if (actorList.length === 0) {
       fetchActorList();
     }
   }, [actorList, fetchActorList]);
+
+  useEffect(() => {
+    if (!showModal) {
+      handleModalHide();
+    };
+  }, [showModal]);
 
   const handleToggleModal = (title, forceClose = false) => {
     setShowModal((prevShowModal) => forceClose ? false : !prevShowModal);
@@ -35,14 +40,14 @@ const Actors = () => {
   };
 
   const handleModalHide = () => {
-    setNewActorName("");
-    setNewActorDescription("");
-    setDeleteActorId("");
-
-    setFormError("");
-    handleToggleModal("", true);
-  };
+      setNewActorName("");
+      setNewActorDescription("");
+      setDeleteActorId("");
   
+      setFormError("");
+      handleToggleModal("", true);
+  };
+
   const handleAddActor = async () => {
     setFormError(""); // Clear previous form error
 
@@ -135,6 +140,7 @@ const Actors = () => {
           ))}
         </Row>
       </Container>
+
       <Modal show={showModal} onHide={handleModalHide}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>

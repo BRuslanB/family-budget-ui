@@ -8,16 +8,14 @@ const CategoryContext = createContext();
 export const CategoryContextProvider = ({ children }) => {
 
   const { formError, setFormError } = useFormErrorContext();
-  // console.log("CategoryContext1.formError=", formError);
 
   const [categoryList, setCategoryList] = useState([]);
   const [category, setCategory] = useState(null);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log("CategoryContext.user", user)
-    console.log("CategoryContext.refreshToken", refreshToken)
-    // fetchCategoryList();
+    // console.log("CategoryContext.user", user)
+    // console.log("CategoryContext.refreshToken", refreshToken)
   }, [user, refreshToken]);
 
   const fetchCategoryList = async () => {

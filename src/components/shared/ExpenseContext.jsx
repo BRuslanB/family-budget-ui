@@ -8,16 +8,14 @@ const ExpenseContext = createContext();
 export const ExpenseContextProvider = ({ children }) => {
 
   const { formError, setFormError } = useFormErrorContext();
-  // console.log("ExpenseContext1.formError=", formError);
 
   const [expenseList, setExpenseList] = useState([]);
   const [expense, setExpense] = useState(null);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log("ExpenseContext.user", user)
-    console.log("ExpenseContext.refreshToken", refreshToken)
-    // fetchExpenseList();
+    // console.log("ExpenseContext.user", user)
+    // console.log("ExpenseContext.refreshToken", refreshToken)
   }, [user, refreshToken]);
 
   const fetchExpenseList = async () => {
@@ -42,7 +40,6 @@ export const ExpenseContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error('Error fetching Expense:', error);
         setFormError(error.response.data.message);
-        // console.log("ExpenseContext2.formError=", formError);
       }
     }
   };
@@ -69,7 +66,6 @@ export const ExpenseContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error('Error fetching Expense:', error);
         setFormError(error.response.data.message);
-        // console.log("ExpenseContext3.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -103,7 +99,6 @@ export const ExpenseContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error creating Expense:", error);
         setFormError(error.response.data.message);
-        // console.log("ExpenseContext4.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -138,7 +133,6 @@ export const ExpenseContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error updating Expense:", error);
         setFormError(error.response.data.message);
-        // console.log("ExpenseContext5.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -172,7 +166,6 @@ export const ExpenseContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error deleting Expense:", error);
         setFormError(error.response.data.message);
-        // console.log("ExpenseContext6.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);

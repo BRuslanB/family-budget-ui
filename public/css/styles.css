@@ -18,7 +18,7 @@
 }
 
 .button_style_add {
-    color: black;
+    color: green;
     font-weight: bold;
     border-style: none;
     background-color: transparent;
@@ -26,7 +26,23 @@
 
 .btn.button_style_add:hover,
 .btn.button_style_add:focus:not(:active) {
-    color: rgb(0, 90, 0);
+    color: rgb(0, 180, 0);
+    border-style: none;
+    background-color: transparent;
+    box-shadow: none;
+    outline: none;
+}
+
+.button_style_add_red {
+    color: red;
+    font-weight: bold;
+    border-style: none;
+    background-color: transparent;
+}
+
+.btn.button_style_add_red:hover,
+.btn.button_style_add_red:focus:not(:active) {
+    color: rgb(180, 0, 0);
     border-style: none;
     background-color: transparent;
     box-shadow: none;

@@ -9,7 +9,6 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
 
   const { formError, setFormError } = useFormErrorContext();
-  // console.log("AuthContext1.formError=", formError);
 
   const [user, setUser] = useState(() => {
     if (localStorage.getItem("tokens")) {
@@ -54,7 +53,6 @@ export const AuthContextProvider = ({ children }) => {
       if (error.response && error.response.status === 400) {
         console.error("Error SignIn:", error);
         setFormError(error.response.data.message);
-        // console.log("AuthContext2.formError=", formError);
       } else if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
         alert("Connection to Server lost.\nPlease contact technical support.");
@@ -77,7 +75,7 @@ export const AuthContextProvider = ({ children }) => {
     } catch (error) {
       if (error.response && error.response.status === 400) {
         console.error("Error SignUp:", error);
-        // console.log("AuthContext3.formError=", formError);
+        setFormError(error.response.data.message);
       } else if (error.code === "ERR_NETWORK") {
         console.error("Network Error:", error);
         alert("Connection to Server lost.\nPlease contact technical support.");
@@ -88,14 +86,14 @@ export const AuthContextProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // const apiResponse = await axios.post(
-      //   "http://localhost:8003/api/auth/signout"
-      // );
-      const cancelTokenSource = axios.CancelToken.source();
       const apiResponse = await axios.post(
-        "http://localhost:8003/api/auth/signout", {
-        cancelToken: cancelTokenSource.token, // Pass the cancel token to the request
-      });
+        "http://localhost:8003/api/auth/signout"
+      );
+      // const cancelTokenSource = axios.CancelToken.source();
+      // const apiResponse = await axios.post(
+      //   "http://localhost:8003/api/auth/signout", {
+      //   cancelToken: cancelTokenSource.token, // Pass the cancel token to the request
+      // });
       console.log("SignOut successfully!");
 
     } catch (error) {

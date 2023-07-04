@@ -12,10 +12,10 @@ export const ActorContextProvider = ({ children }) => {
   const [actor, setActor] = useState(null);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
-  useEffect(() => {
-    // console.log("ActorContext.user", user)
-    // console.log("ActorContext.refreshToken", refreshToken)
-  }, [user, refreshToken]);
+  // useEffect(() => {
+  //   // console.log("ActorContext.user", user)
+  //   // console.log("ActorContext.refreshToken", refreshToken)
+  // }, [user, refreshToken]);
 
   const fetchActorList = async () => {
     try {
@@ -33,7 +33,6 @@ export const ActorContextProvider = ({ children }) => {
         console.log("CategoryList fetching:", null);
         setActorList([]);
       }
-      console.log("actorList", actorList);
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -59,7 +58,6 @@ export const ActorContextProvider = ({ children }) => {
         console.log("Actor fetching:", null);
         setActor(null);
       }
-      // console.log("Actor", actor);
   
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -74,7 +72,6 @@ export const ActorContextProvider = ({ children }) => {
             `http://localhost:8001/api/actors/${id}`
           );
           console.log("Actor fetching with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error fetching Actor with refreshed token:", error);
         }
@@ -92,7 +89,6 @@ export const ActorContextProvider = ({ children }) => {
         payload
       );
       console.log("Actor created:", response.data);
-      // alert(response.data.message); // Display the response message
   
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -108,7 +104,6 @@ export const ActorContextProvider = ({ children }) => {
             payload
           );
           console.log("Actor created with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error creating Actor with refreshed token:", error);
         }
@@ -126,7 +121,6 @@ export const ActorContextProvider = ({ children }) => {
         payload
       );
       console.log("Actor updated:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -142,7 +136,6 @@ export const ActorContextProvider = ({ children }) => {
             payload
           );
           console.log("Actor updated with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error updating Actor with refreshed token:", error);
         }
@@ -159,8 +152,6 @@ export const ActorContextProvider = ({ children }) => {
         `http://localhost:8001/api/actors/${id}`
       );
       console.log("Actor deleted:", response.data);
-      // alert(response.data.message); // Display the response messagee
-
     } catch (error) {
       if (error.response && error.response.status === 400) {
         console.error("Error deleting Actor:", error);
@@ -174,7 +165,6 @@ export const ActorContextProvider = ({ children }) => {
             `http://localhost:8001/api/actors/${id}`
           );
           console.log("Actor deleted:", response.data);
-          // alert(response.data.message); // Display the response messagee
         } catch (error) {
           console.error("Error deleting Actor with refreshed token:", error);
         }

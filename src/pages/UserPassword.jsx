@@ -53,7 +53,7 @@ export const UserPassword = () => {
                 <Form.Label>Current Password</Form.Label>
                 <Form.Control
                     type="password"
-                    value={currentPassword}
+                    value={currentPassword || ""}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -62,7 +62,7 @@ export const UserPassword = () => {
                 <Form.Label>New Password</Form.Label>
                 <Form.Control
                     type="password"
-                    value={newPassword}
+                    value={newPassword || ""}
                     onChange={(e) => setNewPassword(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -71,7 +71,7 @@ export const UserPassword = () => {
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control
                     type="password"
-                    value={rePassword}
+                    value={rePassword || ""}
                     onChange={(e) => setRePassword(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />

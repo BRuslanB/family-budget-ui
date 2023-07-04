@@ -120,7 +120,7 @@ const Expenses = () => {
         <Button className="button_style_add" onClick={() => handleToggleModal("Add Expense")}>
           +Add Expense
         </Button>
-        <Row xs={1} md={2} className="g-4">
+        <Row xs={1} sm={2} md={3} className="g-4">
           {expenseList.map((item) => (
             <Col key={item.id}>
               <Card>
@@ -166,7 +166,7 @@ const Expenses = () => {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={newExpenseName}
+                    value={newExpenseName || ""}
                     onChange={(e) => setNewExpenseName(e.target.value)}
                   />
                 </Form.Group>
@@ -205,7 +205,7 @@ const Expenses = () => {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={newExpenseName}
+                    value={newExpenseName || ""}
                     onChange={(e) => setNewExpenseName(e.target.value)}
                   />
                 </Form.Group>

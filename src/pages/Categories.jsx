@@ -108,7 +108,7 @@ const Categories = () => {
         <Button className="button_style_add" onClick={() => handleToggleModal("Add Category")}>
           +Add Category
         </Button>
-        <Row xs={1} md={2} className="g-4">
+        <Row xs={1} sm={2} md={3} className="g-4">
           {categoryList.map((item) => (
             <Col key={item.id}>
               <Card>
@@ -153,7 +153,7 @@ const Categories = () => {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={newCategoryName}
+                    value={newCategoryName || ""}
                     onChange={(e) => setNewCategoryName(e.target.value)}
                   />
                 </Form.Group>
@@ -178,7 +178,7 @@ const Categories = () => {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={newCategoryName}
+                    value={newCategoryName || ""}
                     onChange={(e) => setNewCategoryName(e.target.value)}
                   />
                 </Form.Group>

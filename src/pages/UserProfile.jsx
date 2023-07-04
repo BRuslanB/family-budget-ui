@@ -82,7 +82,7 @@ export const UserProfile = () => {
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
                     type="text"
-                    value={newFirstName}
+                    value={newFirstName || ""}
                     onChange={(e) => setNewFirstName(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -91,7 +91,7 @@ export const UserProfile = () => {
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
                     type="text"
-                    value={newLastName}
+                    value={newLastName || ""}
                     onChange={(e) => setNewLastName(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -100,7 +100,7 @@ export const UserProfile = () => {
                 <Form.Label>Birth Day</Form.Label>
                 <Form.Control
                     type="date"
-                    value={newBirthDay}
+                    value={newBirthDay || ""}
                     onChange={(e) => setNewBirthDay(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />

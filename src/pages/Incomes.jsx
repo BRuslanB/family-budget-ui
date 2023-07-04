@@ -111,7 +111,7 @@ const Incomes = () => {
         <Button className="button_style_add" onClick={() => handleToggleModal("Add Income")}>
           +Add Income
         </Button>
-        <Row xs={1} md={2} className="g-4">
+        <Row xs={1} sm={2} md={3} className="g-4">
           {incomeList.map((item) => (
             <Col key={item.id}>
               <Card>
@@ -156,7 +156,7 @@ const Incomes = () => {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={newIncomeName}
+                    value={newIncomeName || ""}
                     onChange={(e) => setNewIncomeName(e.target.value)}
                   />
                 </Form.Group>
@@ -181,7 +181,7 @@ const Incomes = () => {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={newIncomeName}
+                    value={newIncomeName || ""}
                     onChange={(e) => setNewIncomeName(e.target.value)}
                   />
                 </Form.Group>

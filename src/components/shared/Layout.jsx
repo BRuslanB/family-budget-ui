@@ -8,10 +8,10 @@ const Layout = ({ children }) => {
 
   const { user, refreshToken, logout } = useContext(AuthContext);
 
-  useEffect(() => { 
-    // console.log("Layout.user", user)
-    // console.log("Layout.refreshToken", refreshToken)
-  }, [user, refreshToken]);
+  // useEffect(() => { 
+  //   // console.log("Layout.user", user)
+  //   // console.log("Layout.refreshToken", refreshToken)
+  // }, [user, refreshToken]);
 
   return (
     <>
@@ -25,9 +25,22 @@ const Layout = ({ children }) => {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav>
             {user && (
-              <Nav.Link as={Link} to="/payments">
-                Payments
-              </Nav.Link>
+              <NavDropdown className="dropdown-menu-style" 
+                title="Payments" id="nav-dropdown-payments">
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/checks">
+                    Checks
+                </Dropdown.Item>
+                <Dropdown.Divider></Dropdown.Divider>
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/budgets">
+                    Budgets
+                </Dropdown.Item>
+                <Dropdown.Item className="dropdown-item-style" 
+                  as={Link} to="/reports">
+                    Reports
+                </Dropdown.Item>
+              </NavDropdown>
             )}
           </Nav>
           <Nav>
@@ -36,7 +49,7 @@ const Layout = ({ children }) => {
                 title="Settings" id="nav-dropdown-settings">
                 <Dropdown.Item className="dropdown-item-style" 
                   as={Link} to="/categories">
-                    Expense Category
+                    Category
                 </Dropdown.Item>
                 <Dropdown.Item className="dropdown-item-style" 
                   as={Link} to="/expenses">

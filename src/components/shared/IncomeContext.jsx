@@ -13,10 +13,10 @@ export const IncomeContextProvider = ({ children }) => {
   const [incomeList, setIncomeList] = useState([]);
   const [income, setIncome] = useState(null);
 
-  useEffect(() => {
-    // console.log("IncomeContext.user", user)
-    // console.log("IncomeContext.refreshToken", refreshToken)
-  }, [user, refreshToken]);
+  // useEffect(() => {
+  //   // console.log("IncomeContext.user", user)
+  //   // console.log("IncomeContext.refreshToken", refreshToken)
+  // }, [user, refreshToken]);
 
   const fetchIncomeList = async () => {
     try {
@@ -34,7 +34,6 @@ export const IncomeContextProvider = ({ children }) => {
         console.log("IncomeList fetching:", null);
         setIncomeList([]);
       }
-      console.log("incomeList", incomeList);
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -76,7 +75,6 @@ export const IncomeContextProvider = ({ children }) => {
             `http://localhost:8001/api/incomes/${id}`
           );
           console.log("Income fetching with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error fetching Income with refreshed token:", error);
         }
@@ -93,8 +91,6 @@ export const IncomeContextProvider = ({ children }) => {
         "http://localhost:8001/api/incomes",
         payload
       );
-      console.log("Income", income);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -110,7 +106,6 @@ export const IncomeContextProvider = ({ children }) => {
             payload
           );
           console.log("Income created with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error creating Income with refreshed token:", error);
         }
@@ -128,7 +123,6 @@ export const IncomeContextProvider = ({ children }) => {
         payload
       );
       console.log("Income", income);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -144,7 +138,6 @@ export const IncomeContextProvider = ({ children }) => {
             payload
           );
           console.log("Income updated with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error updating Income with refreshed token:", error);
         }
@@ -161,7 +154,6 @@ export const IncomeContextProvider = ({ children }) => {
         `http://localhost:8001/api/incomes/${id}`
       );
       console.log("Income deleted:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -176,7 +168,6 @@ export const IncomeContextProvider = ({ children }) => {
             `http://localhost:8001/api/incomes/${id}`
           );
           console.log("Income deleted:", response.data);
-          // alert(response.data.message); // Display the response messagee
         } catch (error) {
           console.error("Error deleting Income with refreshed token:", error);
         }

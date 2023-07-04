@@ -13,10 +13,10 @@ export const ReceiptContextProvider = ({ children }) => {
   const [receipt, setReceipt] = useState(null);
   const [receiptId, setReceiptId] = useState("");
 
-  useEffect(() => { 
-    // console.log("ReceiptContext.user", user)
-    // console.log("ReceiptContext.refreshToken", refreshToken)
-  }, [user, refreshToken]);
+  // useEffect(() => { 
+  //   // console.log("ReceiptContext.user", user)
+  //   // console.log("ReceiptContext.refreshToken", refreshToken)
+  // }, [user, refreshToken]);
 
   const fetchReceipt = async (id) => {
     try {
@@ -45,7 +45,6 @@ export const ReceiptContextProvider = ({ children }) => {
         setFormError(error.response.data.message);
         setReceipt(null);
         setReceiptId("");
-        console.log("ReceiptContext3.formError=", formError);
       }
       if (error.response && error.response.status === 403) {
         const newInterceptor = createJwtInterceptor(user?.sub, refreshToken?.UUID, setRefreshToken, logout);
@@ -57,7 +56,6 @@ export const ReceiptContextProvider = ({ children }) => {
           console.log("Receipt fetching with refreshed token:", response.data);
           setReceipt(response.data);
           setReceiptId(response.data.id);
-            // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error fetching Receipt with refreshed token:", error);
           setReceipt(null);
@@ -78,7 +76,6 @@ export const ReceiptContextProvider = ({ children }) => {
       );
       console.log("Receipt created:", response.data);
       setReceiptId(response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -95,7 +92,6 @@ export const ReceiptContextProvider = ({ children }) => {
           );
           console.log("Receipt created with refreshed token:", response.data);
           setReceiptId(response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error creating Receipt with refreshed token:", error);
           setReceiptId("");
@@ -114,7 +110,6 @@ export const ReceiptContextProvider = ({ children }) => {
         payload
       );
       console.log("Receipt updated:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -130,7 +125,6 @@ export const ReceiptContextProvider = ({ children }) => {
             payload
           );
           console.log("Receipt updated with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error updating Receipt with refreshed token:", error);
         }
@@ -147,7 +141,6 @@ export const ReceiptContextProvider = ({ children }) => {
         `http://localhost:8002/api/receipts/${id}`
       );
       console.log("Receipt deleted:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -163,7 +156,6 @@ export const ReceiptContextProvider = ({ children }) => {
             `http://localhost:8002/api/receipts/${id}`
           );
           console.log("Receipt deleted:", response.data);
-          // alert(response.data.message); // Display the response messagee
         } catch (error) {
           console.error("Error deleting Receipt with refreshed token:", error);
         }

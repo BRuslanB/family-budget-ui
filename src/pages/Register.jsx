@@ -62,7 +62,7 @@ const Register = () => {
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                     type="email"
-                    value={userEmail}
+                    value={userEmail || ""}
                     onChange={(e) => setUserEmail(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                     />
@@ -71,7 +71,7 @@ const Register = () => {
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
                     type="text"
-                    value={firstName}
+                    value={firstName || ""}
                     onChange={(e) => setFirstName(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -80,7 +80,7 @@ const Register = () => {
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
                     type="text"
-                    value={lastName}
+                    value={lastName || ""}
                     onChange={(e) => setLastName(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -89,7 +89,7 @@ const Register = () => {
                 <Form.Label>Birth Day</Form.Label>
                 <Form.Control
                     type="date"
-                    value={birthDay}
+                    value={birthDay || ""}
                     onChange={(e) => setBirthDay(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -98,7 +98,7 @@ const Register = () => {
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                     type="password"
-                    value={password}
+                    value={password || ""}
                     onChange={(e) => setPassword(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -107,7 +107,7 @@ const Register = () => {
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control
                     type="password"
-                    value={rePassword}
+                    value={rePassword || ""}
                     onChange={(e) => setRePassword(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />

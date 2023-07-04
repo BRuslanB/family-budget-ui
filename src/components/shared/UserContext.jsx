@@ -16,10 +16,10 @@ export const UserContextProvider = ({ children }) => {
   const { user, refreshToken, setUser, setRefreshToken, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => { 
-    // console.log("UserContext.user", user)
-    // console.log("UserContext.refreshToken", refreshToken)
-  }, [user, refreshToken]);
+  // useEffect(() => { 
+  //   // console.log("UserContext.user", user)
+  //   // console.log("UserContext.refreshToken", refreshToken)
+  // }, [user, refreshToken]);
 
   const fetchUserProfile = async () => {
     try {
@@ -52,7 +52,6 @@ export const UserContextProvider = ({ children }) => {
             'http://localhost:8003/api/users/getuser'
           );
           console.log("User Profile fetching with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error fetching User Profile with refreshed token:", error);
         }
@@ -107,7 +106,6 @@ export const UserContextProvider = ({ children }) => {
             payload
           );
           console.log("User Profile updated with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error updating User Profile with refreshed token:", error);
         }
@@ -142,7 +140,6 @@ export const UserContextProvider = ({ children }) => {
             payload
           );
           console.log("User Password updated with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error updating User Password with refreshed token:", error);
         }

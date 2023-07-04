@@ -2,15 +2,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /*height: 100vh; /* Занимает 100% высоты экрана */
-    /*width: 100%; /* Занимает всю доступную ширину */
 }
   
 .image {
-    /* position: 0,0; */
     width: 112%; 
-    /*height: 100%; */
-    object-fit: cover; /* Растягивается без искажений */
+    object-fit: cover; /* Stretches without distortion */
 }
 
 .bg_color_style {

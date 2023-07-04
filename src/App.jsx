@@ -9,6 +9,8 @@ import { IncomeContextProvider } from "./components/shared/IncomeContext";
 import { ActorContextProvider } from "./components/shared/ActorContext"; 
 import { CheckContextProvider } from "./components/shared/CheckContext"; 
 import { ReceiptContextProvider } from "./components/shared/ReceiptContext"; 
+import { BudgetContextProvider } from "./components/shared/BudgetContext"; 
+import { ReportContextProvider } from "./components/shared/ReportContext"; 
 import Layout from "./components/shared/Layout";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 import Home from "./pages/Home";
@@ -21,6 +23,8 @@ import Categories from "./pages/Categories";
 import Expenses from "./pages/Expenses";
 import Incomes from "./pages/Incomes";
 import Actors from "./pages/Actors";
+import Budgets from "./pages/Budgets";
+import Reports from "./pages/Reports";
  
 function App() {
   return (
@@ -31,7 +35,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />}></Route>
               <Route
-                path="/payments"
+                path="/checks"
                 element={
                   <ProtectedRoute accessBy="authenticated">
                     <IncomeContextProvider>
@@ -45,6 +49,26 @@ function App() {
                         </ActorContextProvider>
                       </ExpenseContextProvider>
                     </IncomeContextProvider>
+                  </ProtectedRoute>
+                }
+              ></Route>
+              <Route
+                path="/budgets"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <BudgetContextProvider>
+                      <Budgets />
+                    </BudgetContextProvider>
+                  </ProtectedRoute>
+                }
+              ></Route>
+              <Route
+                path="/reports"
+                element={
+                  <ProtectedRoute accessBy="authenticated">
+                    <ReportContextProvider>
+                      <Reports />
+                    </ReportContextProvider>
                   </ProtectedRoute>
                 }
               ></Route>

@@ -13,10 +13,10 @@ export const ExpenseContextProvider = ({ children }) => {
   const [expense, setExpense] = useState(null);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
-  useEffect(() => {
-    // console.log("ExpenseContext.user", user)
-    // console.log("ExpenseContext.refreshToken", refreshToken)
-  }, [user, refreshToken]);
+  // useEffect(() => {
+  //   // console.log("ExpenseContext.user", user)
+  //   // console.log("ExpenseContext.refreshToken", refreshToken)
+  // }, [user, refreshToken]);
 
   const fetchExpenseList = async () => {
     try {
@@ -34,7 +34,6 @@ export const ExpenseContextProvider = ({ children }) => {
         console.log("ExpenseList fetching:", null);
         setExpenseList([]);
       }
-      console.log("expenseList", expenseList);
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -60,7 +59,6 @@ export const ExpenseContextProvider = ({ children }) => {
         console.log("Expense fetching:", null);
         setExpense(null);
       }
-      console.log("Expense", expense);
   
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -75,7 +73,6 @@ export const ExpenseContextProvider = ({ children }) => {
             `http://localhost:8001/api/expenses/${id}`
           );
           console.log("Expense fetching with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error fetching Expense with refreshed token:", error);
         }
@@ -93,7 +90,6 @@ export const ExpenseContextProvider = ({ children }) => {
         payload
       );
       console.log("Expense created:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -109,7 +105,6 @@ export const ExpenseContextProvider = ({ children }) => {
             payload
           );
           console.log("Expense created with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error creating Expense with refreshed token:", error);
         }
@@ -127,7 +122,6 @@ export const ExpenseContextProvider = ({ children }) => {
         payload
       );
       console.log("Expense updated:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -143,7 +137,6 @@ export const ExpenseContextProvider = ({ children }) => {
             payload
           );
           console.log("Expense updated with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error updating Expense with refreshed token:", error);
         }
@@ -160,7 +153,6 @@ export const ExpenseContextProvider = ({ children }) => {
         `http://localhost:8001/api/expenses/${id}`
       );
       console.log("Expense deleted:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -175,7 +167,6 @@ export const ExpenseContextProvider = ({ children }) => {
             `http://localhost:8001/api/expenses/${id}`
           );
           console.log("Expense deleted:", response.data);
-          // alert(response.data.message); // Display the response messagee
         } catch (error) {
           console.error("Error deleting Expense with refreshed token:", error);
         }

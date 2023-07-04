@@ -153,7 +153,7 @@ const Actors = () => {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={newActorName}
+                    value={newActorName || ""}
                     onChange={(e) => setNewActorName(e.target.value)}
                   />
                 </Form.Group>
@@ -178,7 +178,7 @@ const Actors = () => {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={newActorName}
+                    value={newActorName || ""}
                     onChange={(e) => setNewActorName(e.target.value)}
                   />
                 </Form.Group>

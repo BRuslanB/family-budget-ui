@@ -13,10 +13,10 @@ export const CheckContextProvider = ({ children }) => {
   const [check, setCheck] = useState(null);
   const { user, refreshToken, setRefreshToken, logout } = useContext(AuthContext);
 
-  useEffect(() => {
-    // console.log("CheckContext.user", user)
-    // console.log("CheckContext.refreshToken", refreshToken)
-  }, [user, refreshToken]);
+  // useEffect(() => {
+  //   // console.log("CheckContext.user", user)
+  //   // console.log("CheckContext.refreshToken", refreshToken)
+  // }, [user, refreshToken]);
 
   const fetchCheckList = async () => {
     try {
@@ -34,7 +34,6 @@ export const CheckContextProvider = ({ children }) => {
         console.log("CheckList fetching:", null);
         setCheckList([]);
       }
-      console.log("checkList", checkList);
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -60,11 +59,10 @@ export const CheckContextProvider = ({ children }) => {
         console.log("CheckListDates fetching:", null);
         setCheckList([]);
       }
-      console.log("checkList", checkList);
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        console.error('Error fetching Check dates:', error);
+        console.error('Error fetching CheckListDates:', error);
         setFormError(error.response.data.message);
       }
     }
@@ -86,7 +84,6 @@ export const CheckContextProvider = ({ children }) => {
         console.log("Check fetching:", null);
         setCheck(null);
       }
-      console.log("Check", check);
   
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -103,7 +100,6 @@ export const CheckContextProvider = ({ children }) => {
           );
           console.log("Check fetching with refreshed token:", response.data);
           setCheck(response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error fetching Check with refreshed token:", error);
           setCheck(null);
@@ -122,7 +118,6 @@ export const CheckContextProvider = ({ children }) => {
         payload
       );
       console.log("Check created:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -138,7 +133,6 @@ export const CheckContextProvider = ({ children }) => {
             payload
           );
           console.log("Check created with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error creating Check with refreshed token:", error);
         }
@@ -156,7 +150,6 @@ export const CheckContextProvider = ({ children }) => {
         payload
       );
       console.log("Check updated:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -172,7 +165,6 @@ export const CheckContextProvider = ({ children }) => {
             payload
           );
           console.log("Check updated with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error updating Check with refreshed token:", error);
         }
@@ -190,7 +182,6 @@ export const CheckContextProvider = ({ children }) => {
         payload
       );
       console.log("Check Object updated:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -206,7 +197,6 @@ export const CheckContextProvider = ({ children }) => {
             payload
           );
           console.log("Check Object updated with refreshed token:", response.data);
-          // alert(response.data.message); // Display the response message
         } catch (error) {
           console.error("Error updating Check Object with refreshed token:", error);
         }
@@ -223,7 +213,6 @@ export const CheckContextProvider = ({ children }) => {
         `http://localhost:8001/api/checks/${id}`
       );
       console.log("Check deleted:", response.data);
-      // alert(response.data.message); // Display the response messagee
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -238,7 +227,6 @@ export const CheckContextProvider = ({ children }) => {
             `http://localhost:8001/api/checks/${id}`
           );
           console.log("Check deleted:", response.data);
-          // alert(response.data.message); // Display the response messagee
         } catch (error) {
           console.error("Error deleting Check with refreshed token:", error);
         }

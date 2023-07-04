@@ -48,7 +48,7 @@ const Login = () => {
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                     type="email"
-                    value={userEmail}
+                    value={userEmail || ""}
                     onChange={(e) => setUserEmail(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />
@@ -57,7 +57,7 @@ const Login = () => {
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                     type="password"
-                    value={password}
+                    value={password || ""}
                     onChange={(e) => setPassword(e.target.value)}
                     onKeyDown={handleKeyDown} // onKeyDown handler
                   />

@@ -89,11 +89,6 @@ export const AuthContextProvider = ({ children }) => {
       const apiResponse = await axios.post(
         "http://localhost:8003/api/auth/signout"
       );
-      // const cancelTokenSource = axios.CancelToken.source();
-      // const apiResponse = await axios.post(
-      //   "http://localhost:8003/api/auth/signout", {
-      //   cancelToken: cancelTokenSource.token, // Pass the cancel token to the request
-      // });
       console.log("SignOut successfully!");
 
     } catch (error) {

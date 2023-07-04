@@ -41,7 +41,7 @@ const Checks = () => {
 
   useEffect(() => {
     setFormError(""); // Clear previous form error on component mount
-    setCheckList([]); // Clear checkList values
+    setCheckList([]); // Clear previous values
   }, []);
 
   useEffect(() => {
@@ -51,9 +51,7 @@ const Checks = () => {
     if (!dateTo) {
       setDateTo(localStorage.getItem('date_to'));
     }
-  }, [dateFrom, dateTo]);
 
-  useEffect(() => {
     if (checkList.length === 0) {
       if (dateFrom && dateTo) {
         fetchCheckListDates(dateFrom, dateTo)
@@ -64,7 +62,7 @@ const Checks = () => {
       fetchExpenseList();
       fetchActorList();
     }
-  }, [checkList, fetchCheckList, fetchCheckListDates]);
+  }, [dateFrom, dateTo]);
 
   useEffect(() => {
     if (check) {
@@ -159,6 +157,10 @@ const Checks = () => {
 
     if (!newCheckVal || newCheckDate.trim() === "" || !selectedActorId || !selectedExpenseId) {
       setFormError("Please fill in all the required fields.");
+
+    } else if (selectedExpenseId && newCheckVal > 0) {
+      setFormError("When choosing Expense, the Value of the sum must not be positive.");
+
     } else {
       const payload = {
         val: newCheckVal,
@@ -187,6 +189,10 @@ const Checks = () => {
 
     if (!newCheckVal || newCheckDate.trim() === "" || !selectedActorId || !selectedIncomeId) {
       setFormError("Please fill in all the required fields.");
+
+    } else if (selectedIncomeId && newCheckVal < 0) {
+      setFormError("When choosing Income, the Value of the sum must not be negative.");
+
     } else {
       const payload = {
         val: newCheckVal,
@@ -229,6 +235,16 @@ const Checks = () => {
     if (!newCheckVal || newCheckDate.trim() === "" || !selectedActorId || 
       (!selectedIncomeId && !selectedExpenseId)) {
       setFormError("Please fill in all the required fields.");
+
+    } else if (selectedExpenseId && newCheckVal > 0) {
+      setFormError("When choosing Expense, the Value of the sum must not be positive.");
+
+    } else if (selectedIncomeId && newCheckVal < 0) {
+      setFormError("When choosing Income, the Value of the sum must not be negative.");
+
+    } else if (selectedIncomeId && selectedExpenseId) {
+      setFormError("Both Income and Expense must not be selected.");
+
     } else {
       const payload = {
         id: checkId.current,
@@ -351,29 +367,29 @@ const Checks = () => {
       <Container className="mt-2">
         {/* Block parameters */}
         <Row className="g-4">
-          <Col xs={6} md={2}>
+          <Col xs={6} sm={4} md={2}>
             <Form.Label className="fw-bold">DATE FROM</Form.Label>
           </Col>
-          <Col xs={6} md={2}>
+          <Col xs={6} sm={4} md={2}>
             <Form.Label className="fw-bold">DATE TO</Form.Label>
           </Col>
         </Row>
         <Row className="g-4">
-          <Col xs={6} md={2}>
+          <Col xs={6} sm={4} md={2}>
             <Form.Control
               type="date"
-              value={dateFrom}
+              value={dateFrom || ""}
               onChange={(e) => setDateFrom(e.target.value)}
             />
           </Col>
-          <Col xs={6} md={2}>
+          <Col xs={6} sm={4} md={2}>
             <Form.Control
               type="date"
-              value={dateTo}
+              value={dateTo || ""}
               onChange={(e) => setDateTo(e.target.value)}
             />
           </Col>
-          <Col xs={6} md={4}>
+          <Col xs={12} sm={6} md={4}>
             <Button className="button_style me-2" onClick={applyParam}>
               APPLY
             </Button>
@@ -385,7 +401,7 @@ const Checks = () => {
 
         {/* Buttons Add Check */}
         <Row className="g-4 mt-2">
-          <Col xs={6} md={12}>
+          <Col>
             <Button className="button_style_add_red" 
               onClick={() => handleToggleModal("Add Check Expense")}>
               +Add Check Expense
@@ -398,13 +414,15 @@ const Checks = () => {
         </Row>
 
         {/* Cards Checks */}
-        <Row xs={2} sm={3} md={4} className="g-4">
+        <Row xs={1} sm={2} md={3} className="g-4">
           {checkList.map((item) => (
             <Col key={item.id}>
               <Card>
                 <Card.Body>
-                  <Card.Title>Suma: {item.expense ? "-" : ""}{item.val} &nbsp; 
-                    Date: {item.date}</Card.Title>
+                  <Card.Title className={item.val ? "" : "text-danger"}>
+                    Suma: {item.val ? item.val : "Invalid Check"} &nbsp; 
+                    Date: {item.date}
+                  </Card.Title>
                   {item.expense && <Card.Text>Expense: {item.expense.name}</Card.Text>}
                   {item.income && <Card.Text>Income: {item.income.name}</Card.Text>}
                   <Card.Text>Actor: {item.actor ? item.actor.name : "N/A"}</Card.Text>
@@ -455,7 +473,9 @@ const Checks = () => {
                   <Form.Label>Value</Form.Label>
                   <Form.Control
                     type="number"
-                    value={newCheckVal}
+                    max={0} // Set the maximum value
+                    step={1} // Set the step value                    
+                    value={newCheckVal || ""}
                     onChange={(e) => setNewCheckVal(e.target.value)}
                   />
                 </Form.Group>
@@ -463,7 +483,7 @@ const Checks = () => {
                   <Form.Label>Date</Form.Label>
                   <Form.Control
                     type="date"
-                    value={newCheckDate}
+                    value={newCheckDate || ""}
                     onChange={(e) => setNewCheckDate(e.target.value)}
                   />
                 </Form.Group>
@@ -516,7 +536,9 @@ const Checks = () => {
                   <Form.Label>Value</Form.Label>
                   <Form.Control
                     type="number"
-                    value={newCheckVal}
+                    min={0} // Set the minimum value
+                    step={1} // Set the step value                    
+                    value={newCheckVal || ""}
                     onChange={(e) => setNewCheckVal(e.target.value)}
                   />
                 </Form.Group>
@@ -524,7 +546,7 @@ const Checks = () => {
                   <Form.Label>Date</Form.Label>
                   <Form.Control
                     type="date"
-                    value={newCheckDate}
+                    value={newCheckDate || ""}
                     onChange={(e) => setNewCheckDate(e.target.value)}
                   />
                 </Form.Group>
@@ -577,7 +599,10 @@ const Checks = () => {
                   <Form.Label>Value</Form.Label>
                   <Form.Control
                     type="number"
-                    value={newCheckVal}
+                    value={newCheckVal || ""}
+                    min={setSelectedIncomeId && !setSelectedExpenseId ? 0 : ""} // Set the minimum value
+                    max={!setSelectedIncomeId && setSelectedExpenseId ? 0 : ""} // Set the maximum value
+                    step={1} // Set the step value                    
                     onChange={(e) => setNewCheckVal(e.target.value)}
                   />
                 </Form.Group>
@@ -585,7 +610,7 @@ const Checks = () => {
                   <Form.Label>Date</Form.Label>
                   <Form.Control
                     type="date"
-                    value={newCheckDate}
+                    value={newCheckDate || ""}
                     onChange={(e) => setNewCheckDate(e.target.value)}
                   />
                 </Form.Group>
